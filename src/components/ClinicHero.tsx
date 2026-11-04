@@ -4,6 +4,7 @@ import { useClinic } from '../context/ClinicContext';
 import {
   Sparkles,
   CalendarCheck,
+  Calendar,
   ShieldCheck,
   Clock,
   CheckCircle2,
@@ -76,17 +77,16 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
                 {translations.heroSubtitle}
               </p>
 
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2">
+              {/* Action Buttons - Optimized for Mobile Thumb Reach */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-2 w-full sm:w-auto">
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={onBookClick}
-                  className="min-h-[48px] px-6 sm:px-7 py-3 rounded-full bg-primary text-on-primary font-bold text-sm sm:text-base shadow-lg hover:bg-primary-container transition-all flex items-center gap-2 group cursor-pointer"
+                  className="w-full sm:w-auto min-h-[50px] px-6 sm:px-7 py-3 rounded-full bg-primary text-on-primary font-bold text-sm sm:text-base shadow-lg hover:bg-primary-container transition-all flex items-center justify-center gap-2.5 group cursor-pointer"
                 >
-                  <CalendarCheck className="w-5 h-5" />
+                  <CalendarCheck className="w-5 h-5 shrink-0" />
                   <span>{translations.bookApptBtn}</span>
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </motion.button>
 
                 {onOpenAiAssistant && (
@@ -94,9 +94,9 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                     onClick={onOpenAiAssistant}
-                    className="min-h-[48px] px-5 sm:px-6 py-3 rounded-full bg-surface-container-lowest text-secondary font-semibold text-xs sm:text-sm border border-secondary/30 hover:bg-secondary/5 transition-all flex items-center gap-2 cursor-pointer shadow-sm"
+                    className="w-full sm:w-auto min-h-[50px] px-5 sm:px-6 py-3 rounded-full bg-surface-container-lowest text-secondary font-semibold text-xs sm:text-sm border border-secondary/30 hover:bg-secondary/5 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
                   >
-                    <Sparkles className="w-4 h-4 text-secondary" />
+                    <Sparkles className="w-4 h-4 text-secondary shrink-0" />
                     <span>{translations.askAiBtn}</span>
                   </motion.button>
                 )}
@@ -190,8 +190,8 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
                   onClick={onBookClick}
                   className="w-full min-h-[46px] py-3 rounded-2xl bg-primary/10 text-primary font-bold text-sm hover:bg-primary hover:text-on-primary transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
+                  <Calendar className="w-4 h-4 shrink-0" />
                   <span>{translations.selectSlotBtn}</span>
-                  <ArrowRight className="w-4 h-4" />
                 </motion.button>
               </div>
             </motion.div>

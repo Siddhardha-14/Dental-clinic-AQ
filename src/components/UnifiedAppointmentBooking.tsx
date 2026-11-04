@@ -201,15 +201,15 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
             )}
           </div>
 
-          {/* Action Buttons - Patient Focused */}
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          {/* Action Buttons - Patient Focused & Mobile Optimized */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 pt-2 w-full">
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={handleResetForNewBooking}
-              className="min-h-[48px] px-6 py-3 rounded-full bg-primary text-on-primary font-bold text-sm shadow-md hover:bg-primary-container transition-all flex items-center gap-2 cursor-pointer"
+              className="w-full sm:w-auto min-h-[48px] px-6 py-3 rounded-full bg-primary text-on-primary font-bold text-sm shadow-md hover:bg-primary-container transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <CalendarPlus className="w-4 h-4" />
+              <CalendarPlus className="w-4 h-4 shrink-0" />
               <span>{translations.bookAnotherBtn}</span>
             </motion.button>
 
@@ -217,9 +217,9 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => window.print()}
-              className="min-h-[48px] px-5 py-3 rounded-full bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-all flex items-center gap-2 text-xs font-bold cursor-pointer"
+              className="w-full sm:w-auto min-h-[48px] px-5 py-3 rounded-full bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2 text-xs font-bold cursor-pointer"
             >
-              <Printer className="w-4 h-4 text-on-surface-variant" />
+              <Printer className="w-4 h-4 text-on-surface-variant shrink-0" />
               <span>{translations.printPassBtn}</span>
             </motion.button>
 
@@ -230,7 +230,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
                 setActiveTab('home');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="min-h-[48px] px-5 py-3 rounded-full bg-surface-container-lowest text-on-surface-variant border border-outline-variant/40 hover:text-on-surface transition-all flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
+              className="w-full sm:w-auto min-h-[48px] px-5 py-3 rounded-full bg-surface-container-lowest text-on-surface-variant border border-outline-variant/40 hover:text-on-surface transition-all flex items-center justify-center gap-1.5 text-xs font-semibold cursor-pointer"
             >
               <span>{translations.returnHomeBtn}</span>
             </motion.button>
@@ -638,9 +638,8 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
               type="submit"
               className="w-full min-h-[54px] rounded-2xl bg-primary text-on-primary font-bold text-sm sm:text-base shadow-xl hover:bg-primary-container transition-all flex items-center justify-center gap-2.5 cursor-pointer"
             >
-              <Lock className="w-5 h-5" />
+              <Lock className="w-5 h-5 shrink-0" />
               <span>{translations.confirmBtn}</span>
-              <ArrowRight className="w-5 h-5" />
             </motion.button>
 
             <p className="text-center text-xs text-on-surface-variant">

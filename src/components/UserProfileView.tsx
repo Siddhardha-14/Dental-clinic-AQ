@@ -17,6 +17,7 @@ import {
   Sparkles,
   Phone,
   FileText,
+  Zap,
 } from 'lucide-react';
 
 export interface UserProfileViewProps {
@@ -190,9 +191,8 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                     }}
                     className="w-full min-h-[50px] rounded-2xl bg-primary text-on-primary font-bold text-sm shadow hover:bg-primary-container transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <Stethoscope className="w-5 h-5" />
+                    <Stethoscope className="w-5 h-5 shrink-0" />
                     <span>{translations.openScheduleBtn}</span>
-                    <ArrowRight className="w-4 h-4" />
                   </motion.button>
 
                   <p className="text-center text-xs text-on-surface-variant">
@@ -221,10 +221,10 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                     whileTap={{ scale: 0.98 }}
                     type="button"
                     onClick={handleOneTapDoctorLogin}
-                    className="w-full min-h-[48px] px-3 py-2 rounded-xl bg-primary text-on-primary font-bold text-xs sm:text-sm shadow hover:bg-primary-container transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer"
+                    className="w-full min-h-[48px] px-4 py-2.5 rounded-xl bg-primary text-on-primary font-bold text-xs sm:text-sm shadow hover:bg-primary-container transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <span className="truncate">⚡ {translations.oneTapDoctorBtn}</span>
-                    <ArrowRight className="w-4 h-4 shrink-0" />
+                    <Zap className="w-4 h-4 text-amber-300 fill-amber-300 shrink-0" />
+                    <span>{translations.oneTapDoctorBtn}</span>
                   </motion.button>
 
                   <p className="text-[11px] text-center text-on-surface-variant">

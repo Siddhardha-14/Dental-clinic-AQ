@@ -6,6 +6,7 @@ import {
   Stethoscope,
   Clock,
   User,
+  UserCheck,
   Phone,
   AlertTriangle,
   CheckCircle2,
@@ -398,8 +399,9 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                         whileHover={{ scale: 1.04 }}
                         whileTap={{ scale: 0.96 }}
                         onClick={() => updateAppointmentStatus(apt.id, 'In Chair')}
-                        className="min-h-[44px] px-3.5 py-1.5 rounded-xl bg-emerald-700 text-white font-bold text-xs hover:bg-emerald-800 transition-all flex items-center gap-1 cursor-pointer"
+                        className="min-h-[44px] px-3.5 py-1.5 rounded-xl bg-emerald-700 text-white font-bold text-xs hover:bg-emerald-800 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                       >
+                        <UserCheck className="w-3.5 h-3.5 shrink-0" />
                         <span>{translations.seatInChairBtn}</span>
                       </motion.button>
                     )}

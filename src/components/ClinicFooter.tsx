@@ -6,6 +6,8 @@ import {
   ShieldCheck,
   Heart,
   User,
+  CalendarCheck,
+  Sparkles,
 } from 'lucide-react';
 
 export interface ClinicFooterProps {
@@ -97,18 +99,20 @@ export const ClinicFooter: React.FC<ClinicFooterProps> = ({
                   setActiveTab('booking');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="min-h-[44px] text-on-surface-variant hover:text-primary transition-colors font-medium flex items-center"
+                className="min-h-[44px] text-on-surface-variant hover:text-primary transition-colors font-medium flex items-center gap-1.5"
               >
-                {translations.bookVisit}
+                <CalendarCheck className="w-3.5 h-3.5 shrink-0" />
+                <span>{translations.bookVisit}</span>
               </button>
             </li>
             {onOpenAiAssistant && (
               <li>
                 <button
                   onClick={onOpenAiAssistant}
-                  className="min-h-[44px] text-on-surface-variant hover:text-secondary transition-colors font-medium flex items-center"
+                  className="min-h-[44px] text-on-surface-variant hover:text-secondary transition-colors font-medium flex items-center gap-1.5"
                 >
-                  {translations.navAi}
+                  <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                  <span>{translations.navAi}</span>
                 </button>
               </li>
             )}
