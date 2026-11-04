@@ -34,6 +34,8 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
     doctorLogout,
     appointments,
     setActiveTab,
+    translations,
+    language,
   } = useClinic();
 
   const [email, setEmail] = useState<string>('doctor@lumina.com');
@@ -91,22 +93,24 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs uppercase tracking-widest font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary">
-                {doctorSession.isAuthenticated ? 'Clinician Account' : 'Patient & Member Portal'}
+                {doctorSession.isAuthenticated
+                  ? (language === 'te' ? 'వైద్యుల ఖాతా' : 'Clinician Account')
+                  : (language === 'te' ? 'రోగి & సభ్యుల పోర్టల్' : 'Patient & Member Portal')}
               </span>
               {doctorSession.isAuthenticated && (
                 <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
-                  <span>Online &middot; Operatory 1</span>
+                  <span>{language === 'te' ? 'ఆన్‌లైన్ · ఆపరేటరీ 1' : 'Online · Operatory 1'}</span>
                 </span>
               )}
             </div>
             <h1 className="text-xl sm:text-3xl font-extrabold text-on-surface tracking-tight mt-1">
-              {doctorSession.isAuthenticated ? doctorSession.doctorName : 'Lumina Account & Profile'}
+              {doctorSession.isAuthenticated ? doctorSession.doctorName : translations.profileTitle}
             </h1>
             <p className="text-xs sm:text-sm text-on-surface-variant">
               {doctorSession.isAuthenticated
-                ? 'Lead Clinician &middot; Operatory 1 (Panoramic Suite)'
-                : 'Manage your visits, dental passes, and doctor clinical sign-in.'}
+                ? (language === 'te' ? 'ప్రధాన వైద్యులు · ఆపరేటరీ 1 (పనోరమిక్ సూట్)' : 'Lead Clinician · Operatory 1 (Panoramic Suite)')
+                : translations.profileSubtitle}
             </p>
           </div>
         </div>
@@ -119,7 +123,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
             className="min-h-[44px] px-4 py-2.5 rounded-xl border border-error/30 text-error hover:bg-error/10 font-semibold text-xs transition-all flex items-center gap-2 self-start sm:self-auto cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
-            <span>Sign Out Doctor</span>
+            <span>{translations.signOutBtn}</span>
           </motion.button>
         )}
       </motion.div>
@@ -140,15 +144,15 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                 </div>
                 <div>
                   <h2 className="text-lg sm:text-xl font-extrabold text-on-surface">
-                    Doctor Clinical Login
+                    {translations.doctorLoginTitle}
                   </h2>
                   <p className="text-xs text-on-surface-variant">
-                    Exclusive staff access for Dr. Sarah Jenkins
+                    {translations.doctorLoginSubtitle}
                   </p>
                 </div>
               </div>
               <span className="text-[11px] font-bold text-primary px-3 py-1 rounded-full bg-primary/10">
-                1-Login Only
+                {language === 'te' ? '1-లాగిన్ మాత్రమే' : '1-Login Only'}
               </span>
             </div>
 
@@ -158,15 +162,17 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                 <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-3">
                   <div className="flex items-center gap-2 text-xs font-bold text-emerald-900">
                     <UserCheck className="w-4 h-4 text-emerald-700" />
-                    <span>Active Doctor Session Verified</span>
+                    <span>{language === 'te' ? 'యాక్టివ్ డాక్టర్ సెషన్ ధృవీకరించబడింది' : 'Active Doctor Session Verified'}</span>
                   </div>
                   <p className="text-xs text-emerald-800 leading-relaxed">
-                    You are signed in as <strong>{doctorSession.doctorName}</strong>. You have full clinical authorization to inspect arriving patients, adjust treatment statuses, and chart clinical notes.
+                    {language === 'te'
+                      ? `మీరు ${doctorSession.doctorName} గా లాగిన్ అయ్యారు. మీకు వచ్చే రోగులను పరిశీలించడానికి, చికిత్స స్థితిని నవీకరించడానికి మరియు క్లినికల్ నోట్స్ రికార్డ్ చేయడానికి పూర్తి అనుమతి ఉంది.`
+                      : `You are signed in as ${doctorSession.doctorName}. You have full clinical authorization to inspect arriving patients, adjust treatment statuses, and chart clinical notes.`}
                   </p>
                   <div className="flex items-center gap-3 pt-1 text-xs text-emerald-900 font-semibold">
-                    <span>Scheduled Today: {appointments.length} Patients</span>
+                    <span>{language === 'te' ? `ఈ రోజు షెడ్యూల్: ${appointments.length} రోగులు` : `Scheduled Today: ${appointments.length} Patients`}</span>
                     <span>&middot;</span>
-                    <span>Operatory: Suite 1</span>
+                    <span>{language === 'te' ? 'ఆపరేటరీ: సూట్ 1' : 'Operatory: Suite 1'}</span>
                   </div>
                 </div>
 
@@ -185,12 +191,12 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                     className="w-full min-h-[50px] rounded-2xl bg-primary text-on-primary font-bold text-sm shadow hover:bg-primary-container transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Stethoscope className="w-5 h-5" />
-                    <span>Open Doctor Schedule &amp; Treatment Board</span>
+                    <span>{translations.openScheduleBtn}</span>
                     <ArrowRight className="w-4 h-4" />
                   </motion.button>
 
                   <p className="text-center text-xs text-on-surface-variant">
-                    View who is coming for treatment and when they are scheduled.
+                    {language === 'te' ? 'ఎవరు చికిత్స కోసం వస్తున్నారో మరియు ఎప్పుడు షెడ్యూల్ చేయబడ్డారో చూడండి.' : 'View who is coming for treatment and when they are scheduled.'}
                   </p>
                 </div>
               </div>
@@ -198,14 +204,16 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
               /* DOCTOR LOGIN FORM */
               <div className="space-y-5">
                 <p className="text-xs text-on-surface-variant leading-relaxed">
-                  To view today&apos;s arriving patients, time slots, and medical concerns, sign in to the clinic doctor portal below.
+                  {language === 'te'
+                    ? 'ఈ రోజు వచ్చే రోగులు, సమయ స్లాట్లు మరియు సమస్యలను వీక్షించడానికి, క్రింద ఉన్న క్లినిక్ డాక్టర్ పోర్టల్‌కు సైన్ ఇన్ చేయండి.'
+                    : 'To view today\'s arriving patients, time slots, and medical concerns, sign in to the clinic doctor portal below.'}
                 </p>
 
                 {/* 1-Tap Quick Doctor Login */}
                 <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 space-y-3">
                   <div className="flex items-center gap-2 text-xs font-bold text-primary">
                     <UserCheck className="w-4 h-4" />
-                    <span>Single Doctor Login (Fast Access)</span>
+                    <span>{translations.oneTapDoctorBtn}</span>
                   </div>
 
                   <motion.button
@@ -215,19 +223,19 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                     onClick={handleOneTapDoctorLogin}
                     className="w-full min-h-[48px] rounded-xl bg-primary text-on-primary font-bold text-sm shadow hover:bg-primary-container transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <span>⚡ One-Tap Sign In as Dr. Sarah Jenkins</span>
+                    <span>⚡ {translations.oneTapDoctorBtn}</span>
                     <ArrowRight className="w-4 h-4" />
                   </motion.button>
 
                   <p className="text-[11px] text-center text-on-surface-variant">
-                    Pre-authorized for Dr. Sarah Jenkins &middot; Operatory 1
+                    {translations.oneTapDoctorSub}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-3">
                   <div className="flex-1 h-px bg-outline-variant/30" />
                   <span className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
-                    Or Enter Credentials
+                    {translations.orEnterCreds}
                   </span>
                   <div className="flex-1 h-px bg-outline-variant/30" />
                 </div>
@@ -267,13 +275,15 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                         onClick={() => setShowPassword(!showPassword)}
                         className="min-h-[44px] px-2 text-[11px] text-on-surface-variant absolute right-1.5 top-1/2 -translate-y-1/2 hover:text-on-surface font-medium flex items-center"
                       >
-                        {showPassword ? 'Hide' : 'Show'}
+                        {showPassword ? (language === 'te' ? 'దాచు' : 'Hide') : (language === 'te' ? 'చూపించు' : 'Show')}
                       </button>
                     </div>
                   </div>
 
                   {loginError && (
-                    <p className="text-xs text-error font-semibold">{loginError}</p>
+                    <p className="text-xs text-error font-semibold">
+                      {language === 'te' ? 'చెల్లని డాక్టర్ ఆధారాలు.' : loginError}
+                    </p>
                   )}
                   {loginSuccessMsg && (
                     <p className="text-xs text-emerald-700 font-semibold">{loginSuccessMsg}</p>
@@ -286,13 +296,13 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                     className="w-full min-h-[46px] rounded-xl bg-surface-container-high text-on-surface font-bold text-xs hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Lock className="w-4 h-4 text-primary" />
-                    <span>Sign In to Doctor Schedule</span>
+                    <span>{translations.signInBtn}</span>
                   </motion.button>
                 </form>
 
                 <div className="flex items-center justify-center gap-1.5 text-[11px] text-on-surface-variant pt-2 border-t border-outline-variant/20">
                   <ShieldCheck className="w-3.5 h-3.5 text-secondary" />
-                  <span>Encrypted HIPAA Station &middot; Lumina Dental SF</span>
+                  <span>{language === 'te' ? 'ఎన్‌క్రిప్ట్ చేయబడిన HIPAA స్టేషన్ · లుమినా డెంటల్' : 'Encrypted HIPAA Station · Lumina Dental SF'}</span>
                 </div>
               </div>
             )}
@@ -309,21 +319,31 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
             className="bg-surface-container-lowest rounded-3xl p-5 sm:p-6 border border-outline-variant/30 shadow-sm space-y-4"
           >
             <div className="flex items-center justify-between pb-3 border-b border-outline-variant/20">
-              <h3 className="text-base font-bold text-on-surface">Patient Details &amp; Insurance</h3>
-              <span className="text-xs text-primary font-semibold">Active Member</span>
+              <h3 className="text-base font-bold text-on-surface">
+                {language === 'te' ? 'రోగి వివరాలు & బీమా' : 'Patient Details & Insurance'}
+              </h3>
+              <span className="text-xs text-primary font-semibold">
+                {language === 'te' ? 'క్రియాశీల సభ్యుడు' : 'Active Member'}
+              </span>
             </div>
 
             <div className="space-y-3 text-xs">
               <div className="flex items-center justify-between">
-                <span className="text-on-surface-variant">Default Clinic</span>
+                <span className="text-on-surface-variant">
+                  {language === 'te' ? 'డిఫాల్ట్ క్లినిక్' : 'Default Clinic'}
+                </span>
                 <span className="font-bold text-on-surface">450 Sutter St, SF</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-on-surface-variant">Insurance Carrier</span>
+                <span className="text-on-surface-variant">
+                  {language === 'te' ? 'బీమా ప్రొవైడర్' : 'Insurance Carrier'}
+                </span>
                 <span className="font-bold text-on-surface">Delta Dental PPO / Self-Pay</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-on-surface-variant">Assigned Clinician</span>
+                <span className="text-on-surface-variant">
+                  {language === 'te' ? 'కేటాయించిన వైద్యులు' : 'Assigned Clinician'}
+                </span>
                 <span className="font-bold text-primary">Dr. Sarah Jenkins, DDS</span>
               </div>
             </div>
@@ -342,7 +362,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
               className="w-full min-h-[44px] py-2.5 rounded-xl bg-surface-container-high text-on-surface font-semibold text-xs hover:bg-surface-container-highest transition-all flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <CalendarCheck className="w-4 h-4 text-primary" />
-              <span>Book New Dental Visit</span>
+              <span>{translations.bookVisit}</span>
             </motion.button>
           </motion.div>
 
@@ -353,7 +373,9 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
             transition={{ duration: 0.35, delay: 0.2 }}
             className="bg-surface-container-lowest rounded-3xl p-5 sm:p-6 border border-outline-variant/30 shadow-sm space-y-4"
           >
-            <h3 className="text-base font-bold text-on-surface">Your Recent Reservations</h3>
+            <h3 className="text-base font-bold text-on-surface">
+              {language === 'te' ? 'మీ ఇటీవలి రిజర్వేషన్లు' : 'Your Recent Reservations'}
+            </h3>
 
             {recentPatientBookings.length > 0 ? (
               <div className="space-y-3">
@@ -378,8 +400,14 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
               </div>
             ) : (
               <div className="p-4 rounded-2xl bg-surface-container-low text-center text-xs text-on-surface-variant space-y-1">
-                <p className="font-medium text-on-surface">No reservations booked yet</p>
-                <p>Reserve an appointment to get your instant digital pass.</p>
+                <p className="font-medium text-on-surface">
+                  {language === 'te' ? 'ఇంకా రిజర్వేషన్లు బుక్ చేయబడలేదు' : 'No reservations booked yet'}
+                </p>
+                <p>
+                  {language === 'te'
+                    ? 'మీ తక్షణ డిజిటల్ పాస్ పొందడానికి అపాయింట్‌మెంట్‌ను రిజర్వ్ చేసుకోండి.'
+                    : 'Reserve an appointment to get your instant digital pass.'}
+                </p>
               </div>
             )}
           </motion.div>

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ClinicAppointment, DentalTreatment, DoctorSession } from '../types/clinic';
+import { Language, Translations, translations } from '../i18n/translations';
 
 export const INITIAL_TREATMENTS: DentalTreatment[] = [
   {
@@ -58,6 +59,49 @@ export const INITIAL_TREATMENTS: DentalTreatment[] = [
     icon: 'shield-check',
   },
 ];
+
+export const TELUGU_TREATMENTS: Record<string, Partial<DentalTreatment>> = {
+  'trt-routine': {
+    name: 'రొటీన్ చెకప్ & డీప్ క్లీన్',
+    category: 'నివారణ సంరక్షణ',
+    description: 'అల్ట్రాసోనిక్ స్కేలింగ్, 4 డిజిటల్ ఎక్స్-రేలు, నోటి క్యాన్సర్ స్క్రీనింగ్ మరియు ఎనామెల్ ఫ్లోరైడేషన్.',
+    duration: '60 నిమిషాలు',
+    estimatedCopay: '₹0.00 – ₹35.00',
+    tag: '100% PPO వర్తిస్తుంది',
+  },
+  'trt-emergency': {
+    name: 'అత్యవసర పంటి నొప్పి ఉపశమనం',
+    category: 'అత్యవసర సంరక్షణ',
+    description: 'తక్షణ రోగనిర్ధారణ ఎక్స్-రే, పంటి సున్నితత్వ పరీక్ష, మరియు అదే రోజు ఇన్ఫెక్షన్/నొప్పి నిర్వహణ.',
+    duration: '45 నిమిషాలు',
+    estimatedCopay: '₹15.00 – ₹40.00',
+    tag: 'అదే రోజు ప్రాధాన్యత',
+  },
+  'trt-whitening': {
+    name: 'కాస్మెటిక్ దంతాల తెల్లబడటం',
+    category: 'సౌందర్య దంతవైద్యం',
+    description: 'ఫిలిప్స్ జూమ్ వైట్‌స్పీడ్ లేజర్ సెషన్. కేవలం 45 నిమిషాల్లో 8 షేడ్స్ వరకు తెల్లగా మార్చండి.',
+    duration: '45 నిమిషాలు',
+    estimatedCopay: '₹290 (ఎలెక్టివ్)',
+    tag: 'ప్రముఖమైనది',
+  },
+  'trt-invisalign': {
+    name: 'ఇన్విసలైన్® 3D స్కాన్ & సంప్రదింపు',
+    category: 'ఆర్థోడాంటిక్స్',
+    description: 'ఖచ్చితమైన 3D ఇంట్రాఓరల్ స్కాన్, AI దంతాల కదలిక అనుకరణ మరియు వ్యక్తిగతీకరించిన అలైనర్ ప్రణాళిక.',
+    duration: '30 నిమిషాలు',
+    estimatedCopay: 'ఉచిత సంప్రదింపు',
+    tag: 'కాంప్లిమెంటరీ',
+  },
+  'trt-crown-implant': {
+    name: 'క్రౌన్ & ఇంప్లాంట్ సంప్రదింపు',
+    category: 'పునరుద్ధరణ చికిత్స',
+    description: '3D డిజిటల్ ఎముక సాంద్రత స్కాన్, జిర్కోనియా క్రౌన్ మూల్యాంకనం మరియు డెంటల్ ఇంప్లాంట్ రోడ్‌మ్యాప్.',
+    duration: '60 నిమిషాలు',
+    estimatedCopay: '₹0.00 – ₹65.00',
+    tag: 'బీమా అర్హత',
+  },
+};
 
 export const INITIAL_APPOINTMENTS: ClinicAppointment[] = [
   {
@@ -237,6 +281,10 @@ export interface BookAppointmentInput {
 }
 
 export interface ClinicContextValue {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (key: keyof Translations) => string;
+  translations: Translations;
   treatments: DentalTreatment[];
   appointments: ClinicAppointment[];
   doctorSession: DoctorSession;
@@ -257,6 +305,33 @@ export interface ClinicContextValue {
 const ClinicContext = createContext<ClinicContextValue | undefined>(undefined);
 
 export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [language, setLanguageState] = useState<Language>(() => {
+    const saved = localStorage.getItem('lumina_language') as Language;
+    return saved === 'te' ? 'te' : 'en';
+  });
+
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
+    localStorage.setItem('lumina_language', lang);
+  };
+
+  const t = (key: keyof Translations): string => {
+    return translations[language][key] || translations.en[key] || '';
+  };
+
+  const currentTranslations = translations[language];
+
+  // Return localized treatments
+  const localizedTreatments: DentalTreatment[] = INITIAL_TREATMENTS.map((t) => {
+    if (language === 'te' && TELUGU_TREATMENTS[t.id]) {
+      return {
+        ...t,
+        ...TELUGU_TREATMENTS[t.id],
+      };
+    }
+    return t;
+  });
+
   const [appointments, setAppointments] = useState<ClinicAppointment[]>(() => {
     const saved = localStorage.getItem('lumina_appointments');
     if (saved) {
@@ -399,7 +474,11 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   return (
     <ClinicContext.Provider
       value={{
-        treatments: INITIAL_TREATMENTS,
+        language,
+        setLanguage,
+        t,
+        translations: currentTranslations,
+        treatments: localizedTreatments,
         appointments,
         doctorSession,
         activeTab,

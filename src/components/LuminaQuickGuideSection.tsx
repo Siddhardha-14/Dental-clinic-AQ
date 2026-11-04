@@ -24,7 +24,7 @@ export const LuminaQuickGuideSection: React.FC<LuminaQuickGuideSectionProps> = (
           <div>
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant text-xs uppercase tracking-wider font-bold mb-2">
               <span className="material-symbols-outlined text-sm">smart_toy</span>
-              <span>Google AI Studio &amp; Clinical Knowledge Hub</span>
+              <span>Clinical AI &amp; Knowledge Hub</span>
             </div>
 
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-on-surface tracking-tight">

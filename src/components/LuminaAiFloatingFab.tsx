@@ -51,7 +51,7 @@ export const LuminaAiFloatingFab: React.FC<LuminaAiFloatingFabProps> = ({
         <div className="flex flex-col text-left leading-none">
           <span className="font-bold">Ask AI Concierge</span>
           <span className="text-[10px] text-on-primary/80 font-normal mt-0.5">
-            Q&amp;A • Powered by Google AI
+            Clinical Q&amp;A • 24/7 Concierge
           </span>
         </div>
       </button>

@@ -17,7 +17,7 @@ export interface LuminaAppProps {
 }
 
 export const LuminaApp: React.FC<LuminaAppProps> = ({ className = '' }) => {
-  const { activeTab, setActiveTab, doctorSession } = useClinic();
+  const { activeTab, setActiveTab, doctorSession, translations } = useClinic();
   const [isAiChatOpen, setIsAiChatOpen] = useState<boolean>(false);
 
   const handleScrollToBooking = () => {
@@ -196,11 +196,11 @@ export const LuminaApp: React.FC<LuminaAppProps> = ({ className = '' }) => {
           <div className="w-6 h-6 rounded-full bg-secondary text-on-secondary flex items-center justify-center">
             <Sparkles className="w-3.5 h-3.5" />
           </div>
-          <span className="text-xs font-bold tracking-tight">Ask AI Dental Concierge</span>
+          <span className="text-xs font-bold tracking-tight">{translations.navAi}</span>
         </motion.button>
       </div>
 
-      {/* AI Dental Assistant Modal (Google AI Studio) */}
+      {/* AI Dental Assistant Modal */}
       <DentalAiChatModal
         isOpen={isAiChatOpen}
         onClose={() => setIsAiChatOpen(false)}

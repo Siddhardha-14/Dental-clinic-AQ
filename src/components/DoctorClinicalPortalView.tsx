@@ -667,7 +667,7 @@ Keep it concise, high-yield, and professional for a licensed dental surgeon.`;
                 )}
 
                 {/* ========================================================== */}
-                {/* 5. AI CLINICAL SCRIBE (POWERED BY GOOGLE AI STUDIO GEMINI) */}
+                {/* 5. AI CLINICAL SCRIBE */}
                 {/* ========================================================== */}
                 <div className="p-5 rounded-2xl bg-secondary-fixed/20 border border-secondary/30 space-y-3">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -677,7 +677,7 @@ Keep it concise, high-yield, and professional for a licensed dental surgeon.`;
                       </div>
                       <div>
                         <h4 className="font-bold text-sm text-on-surface">
-                          Google AI Studio Clinical Assistant
+                          Clinical AI Assistant &amp; Scribe
                         </h4>
                         <p className="text-[11px] text-on-surface-variant">
                           Generate pre-op SOAP assessment notes and high-risk allergy checks

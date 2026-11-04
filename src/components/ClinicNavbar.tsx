@@ -9,6 +9,7 @@ import {
   Menu,
   X,
   CalendarCheck,
+  Languages,
 } from 'lucide-react';
 
 export interface ClinicNavbarProps {
@@ -20,7 +21,7 @@ export const ClinicNavbar: React.FC<ClinicNavbarProps> = ({
   onOpenAiAssistant,
   onOpenProfile,
 }) => {
-  const { activeTab, setActiveTab, doctorSession } = useClinic();
+  const { activeTab, setActiveTab, doctorSession, language, setLanguage, translations } = useClinic();
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
   const handleNavClick = (tab: 'home' | 'booking' | 'profile') => {
@@ -39,6 +40,10 @@ export const ClinicNavbar: React.FC<ClinicNavbarProps> = ({
     setMobileMenuOpen(false);
   };
 
+  const toggleLanguage = () => {
+    setLanguage(language === 'en' ? 'te' : 'en');
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur-md border-b border-outline-variant/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -50,17 +55,17 @@ export const ClinicNavbar: React.FC<ClinicNavbarProps> = ({
             onClick={() => handleNavClick('home')}
             className="flex items-center gap-3 cursor-pointer group select-none"
           >
-            <div className="w-11 h-11 rounded-2xl bg-primary flex items-center justify-center text-on-primary shadow-md transition-transform group-hover:scale-105">
+            <div className="w-11 h-11 rounded-2xl bg-primary flex items-center justify-center text-on-primary shadow-md transition-transform group-hover:scale-105 shrink-0">
               <span className="material-symbols-outlined text-2xl font-bold">dentistry</span>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xl font-bold tracking-tight text-on-surface">Lumina</span>
+                <span className="text-xl font-bold tracking-tight text-on-surface">{translations.brandName}</span>
                 <span className="text-xs uppercase tracking-widest font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                  Dental
+                  {language === 'te' ? 'దంత సంరక్షణ' : 'Dental'}
                 </span>
               </div>
-              <p className="text-xs text-on-surface-variant font-medium">Gentle &amp; Modern Care</p>
+              <p className="text-xs text-on-surface-variant font-medium">{translations.brandTagline}</p>
             </div>
           </motion.div>
 
@@ -74,7 +79,7 @@ export const ClinicNavbar: React.FC<ClinicNavbarProps> = ({
                   : 'text-on-surface-variant hover:text-on-surface'
               }`}
             >
-              Home
+              {translations.navHome}
             </button>
             <button
               onClick={() => handleNavClick('booking')}
@@ -85,7 +90,7 @@ export const ClinicNavbar: React.FC<ClinicNavbarProps> = ({
               }`}
             >
               <CalendarCheck className="w-4 h-4 text-primary" />
-              <span>Book Appointment</span>
+              <span>{translations.navBook}</span>
             </button>
             {onOpenAiAssistant && (
               <button
@@ -93,19 +98,32 @@ export const ClinicNavbar: React.FC<ClinicNavbarProps> = ({
                 className="min-h-[44px] px-4 py-2 rounded-full text-sm font-medium text-on-surface-variant hover:text-primary transition-all flex items-center gap-1.5"
               >
                 <Sparkles className="w-4 h-4 text-secondary" />
-                <span>Ask AI Dental</span>
+                <span>{translations.navAi}</span>
               </button>
             )}
           </nav>
 
           {/* Right Action Area */}
           <div className="hidden lg:flex items-center gap-3">
+            {/* Language Switcher Pill */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={toggleLanguage}
+              className="min-h-[44px] px-3.5 py-1.5 rounded-full bg-surface-container-low border border-outline-variant/40 text-on-surface text-xs font-bold hover:border-primary transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+              title={language === 'en' ? 'తెలుగులోకి మార్చండి' : 'Switch to English'}
+              aria-label="Switch Language"
+            >
+              <Languages className="w-4 h-4 text-primary" />
+              <span>{language === 'en' ? 'తెలుగు' : 'English'}</span>
+            </motion.button>
+
             <a
               href="tel:5552348901"
               className="min-h-[44px] flex items-center gap-2 px-3.5 py-2 rounded-full bg-surface-container-lowest border border-outline-variant/40 text-on-surface text-xs font-semibold hover:border-primary transition-all"
             >
               <PhoneCall className="w-3.5 h-3.5 text-primary" />
-              <span>Emergency (555) 234-8901</span>
+              <span>{translations.navEmergency}</span>
             </a>
 
             <motion.button
@@ -114,7 +132,7 @@ export const ClinicNavbar: React.FC<ClinicNavbarProps> = ({
               onClick={() => handleNavClick('booking')}
               className="min-h-[44px] inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-primary text-on-primary text-sm font-semibold shadow hover:bg-primary-container transition-all cursor-pointer"
             >
-              <span>Book Visit</span>
+              <span>{translations.bookVisit}</span>
             </motion.button>
 
             {/* Profile Button with Doctor Login indicator */}
@@ -122,15 +140,15 @@ export const ClinicNavbar: React.FC<ClinicNavbarProps> = ({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleProfileClick}
-              title={doctorSession.isAuthenticated ? 'Doctor Profile (Dr. Sarah Jenkins)' : 'Profile & Doctor Login'}
-              className={`relative min-h-[44px] min-w-[44px] w-11 h-11 rounded-full flex items-center justify-center transition-all ${
+              title={doctorSession.isAuthenticated ? translations.doctorProfile : translations.patientProfile}
+              className={`relative min-h-[44px] min-w-[44px] w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer ${
                 activeTab === 'profile'
                   ? 'bg-primary text-on-primary ring-2 ring-primary/40 shadow-sm'
                   : doctorSession.isAuthenticated
                   ? 'bg-emerald-100 text-emerald-800 border-2 border-emerald-500 hover:bg-emerald-200'
                   : 'bg-surface-container-high text-on-surface hover:bg-surface-container-highest border border-outline-variant/40'
               }`}
-              aria-label="User Profile and Doctor Login"
+              aria-label={translations.patientProfile}
             >
               {doctorSession.isAuthenticated ? (
                 <>
@@ -143,19 +161,29 @@ export const ClinicNavbar: React.FC<ClinicNavbarProps> = ({
             </motion.button>
           </div>
 
-          {/* Mobile Right Bar: Profile Icon + Hamburger Button */}
+          {/* Mobile Right Bar: Language Toggle + Profile Icon + Hamburger Button */}
           <div className="flex md:hidden items-center gap-2">
             <motion.button
               whileTap={{ scale: 0.92 }}
+              onClick={toggleLanguage}
+              className="min-h-[44px] px-2.5 py-1.5 rounded-xl bg-surface-container-low border border-outline-variant/30 text-on-surface text-xs font-bold flex items-center gap-1 cursor-pointer"
+              aria-label="Toggle language"
+            >
+              <Languages className="w-3.5 h-3.5 text-primary" />
+              <span>{language === 'en' ? 'తె' : 'EN'}</span>
+            </motion.button>
+
+            <motion.button
+              whileTap={{ scale: 0.92 }}
               onClick={handleProfileClick}
-              className={`relative min-h-[44px] min-w-[44px] w-11 h-11 rounded-full flex items-center justify-center transition-all ${
+              className={`relative min-h-[44px] min-w-[44px] w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer ${
                 activeTab === 'profile'
                   ? 'bg-primary text-on-primary'
                   : doctorSession.isAuthenticated
                   ? 'bg-emerald-100 text-emerald-800'
                   : 'bg-surface-container-high text-on-surface'
               }`}
-              aria-label="Open Profile and Doctor Login"
+              aria-label={translations.patientProfile}
             >
               {doctorSession.isAuthenticated ? (
                 <>
@@ -170,7 +198,7 @@ export const ClinicNavbar: React.FC<ClinicNavbarProps> = ({
             <motion.button
               whileTap={{ scale: 0.92 }}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="min-h-[44px] min-w-[44px] w-11 h-11 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors"
+              className="min-h-[44px] min-w-[44px] w-11 h-11 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
               aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -189,19 +217,45 @@ export const ClinicNavbar: React.FC<ClinicNavbarProps> = ({
             transition={{ duration: 0.24, ease: 'easeInOut' }}
             className="md:hidden overflow-hidden bg-surface border-b border-outline-variant/30 px-4 pt-3 pb-6 space-y-3"
           >
+            {/* Language Selector Row */}
+            <div className="flex items-center justify-between p-3 rounded-xl bg-surface-container-low border border-outline-variant/20">
+              <div className="flex items-center gap-2 text-xs font-semibold text-on-surface">
+                <Languages className="w-4 h-4 text-primary" />
+                <span>{language === 'te' ? 'భాష / Language' : 'Language / భాష'}:</span>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setLanguage('en')}
+                  className={`min-h-[44px] px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                    language === 'en' ? 'bg-primary text-on-primary' : 'bg-surface text-on-surface border border-outline-variant/30'
+                  }`}
+                >
+                  English
+                </button>
+                <button
+                  onClick={() => setLanguage('te')}
+                  className={`min-h-[44px] px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                    language === 'te' ? 'bg-primary text-on-primary' : 'bg-surface text-on-surface border border-outline-variant/30'
+                  }`}
+                >
+                  తెలుగు
+                </button>
+              </div>
+            </div>
+
             <button
               onClick={() => handleNavClick('home')}
-              className="w-full min-h-[44px] text-left px-4 py-3 rounded-xl bg-surface-container-low text-on-surface font-semibold text-sm flex items-center justify-between"
+              className="w-full min-h-[44px] text-left px-4 py-3 rounded-xl bg-surface-container-low text-on-surface font-semibold text-sm flex items-center justify-between cursor-pointer"
             >
-              <span>Home Overview</span>
-              <span className="text-xs text-on-surface-variant font-normal">Welcome</span>
+              <span>{translations.navHome}</span>
+              <span className="text-xs text-on-surface-variant font-normal">{language === 'te' ? 'ప్రధాన పేజీ' : 'Welcome'}</span>
             </button>
 
             <button
               onClick={() => handleNavClick('booking')}
-              className="w-full min-h-[44px] text-left px-4 py-3 rounded-xl bg-primary text-on-primary font-semibold text-sm flex items-center justify-between"
+              className="w-full min-h-[44px] text-left px-4 py-3 rounded-xl bg-primary text-on-primary font-semibold text-sm flex items-center justify-between cursor-pointer"
             >
-              <span>Book Appointment</span>
+              <span>{translations.navBook}</span>
               <CalendarCheck className="w-4 h-4 text-on-primary" />
             </button>
 
@@ -211,9 +265,9 @@ export const ClinicNavbar: React.FC<ClinicNavbarProps> = ({
                   setMobileMenuOpen(false);
                   onOpenAiAssistant();
                 }}
-                className="w-full min-h-[44px] text-left px-4 py-3 rounded-xl bg-surface-container-low text-on-surface font-semibold text-sm flex items-center justify-between"
+                className="w-full min-h-[44px] text-left px-4 py-3 rounded-xl bg-surface-container-low text-on-surface font-semibold text-sm flex items-center justify-between cursor-pointer"
               >
-                <span>Ask AI Dental Q&amp;A</span>
+                <span>{translations.navAi}</span>
                 <Sparkles className="w-4 h-4 text-secondary" />
               </button>
             )}
@@ -221,9 +275,9 @@ export const ClinicNavbar: React.FC<ClinicNavbarProps> = ({
             {/* Profile & Doctor Login in Mobile Menu */}
             <button
               onClick={handleProfileClick}
-              className="w-full min-h-[44px] text-left px-4 py-3 rounded-xl bg-surface-container-high text-on-surface font-semibold text-sm flex items-center justify-between"
+              className="w-full min-h-[44px] text-left px-4 py-3 rounded-xl bg-surface-container-high text-on-surface font-semibold text-sm flex items-center justify-between cursor-pointer"
             >
-              <span>{doctorSession.isAuthenticated ? 'Doctor Profile (Dr. Sarah Jenkins)' : 'Profile & Doctor Login'}</span>
+              <span>{doctorSession.isAuthenticated ? translations.doctorProfile : translations.patientProfile}</span>
               {doctorSession.isAuthenticated ? (
                 <Stethoscope className="w-4 h-4 text-primary" />
               ) : (
@@ -237,7 +291,7 @@ export const ClinicNavbar: React.FC<ClinicNavbarProps> = ({
                 className="min-h-[44px] text-xs font-semibold text-primary inline-flex items-center justify-center gap-1.5"
               >
                 <PhoneCall className="w-3.5 h-3.5" />
-                <span>Dental Helpline: (555) 234-8901</span>
+                <span>{translations.emergencyHotlineTitle}: (555) 234-8901</span>
               </a>
             </div>
           </motion.div>

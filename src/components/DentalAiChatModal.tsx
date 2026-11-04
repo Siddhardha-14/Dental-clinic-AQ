@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useClinic } from '../context/ClinicContext';
 import { askGeminiAssistant, ChatMessage } from '../services/geminiService';
 import {
   Sparkles,
@@ -18,11 +19,18 @@ export interface DentalAiChatModalProps {
   readonly onBookAppointment?: () => void;
 }
 
-const SUGGESTED_QUERIES = [
+const SUGGESTED_QUERIES_EN = [
   'Does deep teeth cleaning hurt?',
   'What should I do for a sudden throbbing toothache?',
   'How does Zoom whitening compare to strips?',
   'What dental insurance does Lumina accept?',
+];
+
+const SUGGESTED_QUERIES_TE = [
+  'డీప్ టీత్ క్లీనింగ్ నొప్పిగా ఉంటుందా?',
+  'అకస్మాత్తుగా పంటి నొప్పి వస్తే ఏమి చేయాలి?',
+  'టీత్ వైటనింగ్ ఎలా పనిచేస్తుంది?',
+  'లూమినా ఏ దంత బీమాలను అంగీకరిస్తుంది?',
 ];
 
 export const DentalAiChatModal: React.FC<DentalAiChatModalProps> = ({
@@ -30,16 +38,37 @@ export const DentalAiChatModal: React.FC<DentalAiChatModalProps> = ({
   onClose,
   onBookAppointment,
 }) => {
-  const [messages, setMessages] = useState<ChatMessage[]>([
+  const { language, translations } = useClinic();
+
+  const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
       id: 'welcome',
       role: 'model',
-      text: "Hello! I'm the Lumina Dental AI Concierge, powered by Google AI. Ask me anything about our treatments, pain-free anesthesia, insurance copays, or dental aftercare.",
+      text: translations.aiWelcome,
       timestamp: 'Just now',
     },
   ]);
   const [input, setInput] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // Update welcome message if language changes and only welcome is present
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length <= 1) {
+        return [
+          {
+            id: 'welcome',
+            role: 'model',
+            text: translations.aiWelcome,
+            timestamp: 'Just now',
+          },
+        ];
+      }
+      return prev;
+    });
+  }, [language, translations.aiWelcome]);
+
+  const suggestedQueries = language === 'te' ? SUGGESTED_QUERIES_TE : SUGGESTED_QUERIES_EN;
 
   const handleSend = async (textToSend?: string) => {
     const query = textToSend || input;
@@ -57,7 +86,7 @@ export const DentalAiChatModal: React.FC<DentalAiChatModalProps> = ({
     setIsLoading(true);
 
     try {
-      const response = await askGeminiAssistant(query.trim(), messages);
+      const response = await askGeminiAssistant(query.trim(), messages, language);
       const aiMsg: ChatMessage = {
         id: `model-${Date.now()}`,
         role: 'model',
@@ -69,7 +98,10 @@ export const DentalAiChatModal: React.FC<DentalAiChatModalProps> = ({
       const errorMsg: ChatMessage = {
         id: `model-err-${Date.now()}`,
         role: 'model',
-        text: 'I had trouble connecting to the dental knowledge base. Please feel free to reach our concierge at (555) 234-8900.',
+        text:
+          language === 'te'
+            ? 'క్షమించండి, మా క్లినికల్ సమాచార కేంద్రం అందుబాటులో లేదు. దయచేసి మా ద్వారపాలకుడిని (555) 234-8900 లో సంప్రదించండి.'
+            : 'I had trouble connecting to the dental knowledge base. Please feel free to reach our concierge at (555) 234-8900.',
         timestamp: 'Just now',
       };
       setMessages((prev) => [...prev, errorMsg]);
@@ -89,7 +121,7 @@ export const DentalAiChatModal: React.FC<DentalAiChatModalProps> = ({
             transition={{ duration: 0.25, ease: 'easeOut' }}
             className="bg-surface-container-lowest rounded-3xl max-w-xl w-full h-[85vh] sm:h-[600px] max-h-[700px] shadow-2xl border border-outline-variant/30 flex flex-col overflow-hidden relative"
           >
-            {/* Header */}
+            {/* Header - Verified Clinical AI */}
             <div className="p-4 sm:p-5 border-b border-outline-variant/20 flex items-center justify-between bg-surface-container-low">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-secondary text-on-secondary flex items-center justify-center shadow-sm shrink-0">
@@ -97,13 +129,13 @@ export const DentalAiChatModal: React.FC<DentalAiChatModalProps> = ({
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="text-base font-bold text-on-surface">Lumina Dental AI</h3>
+                    <h3 className="text-base font-bold text-on-surface">{translations.aiTitle}</h3>
                     <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                      Google AI Studio
+                      {translations.aiBadge}
                     </span>
                   </div>
                   <p className="text-xs text-on-surface-variant font-medium">
-                    Clinical Q&amp;A &middot; Instant 24/7 Guidance
+                    {translations.aiSubtitle}
                   </p>
                 </div>
               </div>
@@ -161,14 +193,14 @@ export const DentalAiChatModal: React.FC<DentalAiChatModalProps> = ({
                   <div className="w-8 h-8 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center shrink-0 animate-spin">
                     <Loader2 className="w-4 h-4" />
                   </div>
-                  <span>Lumina AI is consulting clinical guidelines...</span>
+                  <span>{translations.aiThinking}</span>
                 </div>
               )}
             </div>
 
             {/* Suggested Quick Prompts */}
             <div className="p-3 bg-surface-container-low border-t border-outline-variant/20 overflow-x-auto flex gap-2">
-              {SUGGESTED_QUERIES.map((q, idx) => (
+              {suggestedQueries.map((q, idx) => (
                 <button
                   key={idx}
                   onClick={() => handleSend(q)}
@@ -190,16 +222,16 @@ export const DentalAiChatModal: React.FC<DentalAiChatModalProps> = ({
                     onBookAppointment();
                   }}
                   className="hidden sm:flex items-center gap-1.5 min-h-[44px] px-3 py-2 rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-on-primary text-xs font-bold transition-all shrink-0 cursor-pointer"
-                  title="Book Visit"
+                  title={translations.aiBookVisitBtn}
                 >
                   <CalendarCheck className="w-3.5 h-3.5" />
-                  <span>Book Visit</span>
+                  <span>{translations.aiBookVisitBtn}</span>
                 </motion.button>
               )}
 
               <input
                 type="text"
-                placeholder="Ask about dental procedures, whitening, pain, or pricing..."
+                placeholder={translations.aiInputPlaceholder}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {

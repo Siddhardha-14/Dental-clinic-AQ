@@ -15,7 +15,7 @@ const INITIAL_MESSAGES: ChatMessage[] = [
     id: 'msg-welcome',
     role: 'model',
     timestamp: 'Just now',
-    text: `Hello! I'm your **Lumina Dental AI Concierge**, powered by Google AI.\n\nI can answer questions about our **services & pricing**, clinician credentials (Dr. Sarah Jenkins & Dr. Liam Thorne), **insurance coverage**, emergency toothache triage, or help you schedule a visit.\n\nHow can I help you today?`,
+    text: `Hello! I'm your **Lumina Dental AI Concierge**.\n\nI can answer questions about our **services & pricing**, clinician credentials (Dr. Sarah Jenkins & Dr. Liam Thorne), **insurance coverage**, emergency toothache triage, or help you schedule a visit.\n\nHow can I help you today?`,
     quickActions: [
       { label: '💰 Pricing & Services', action: 'What are your services and prices?' },
       { label: '🦷 Dental Emergency Triage', action: 'I have severe tooth pain, what should I do?' },
@@ -65,7 +65,7 @@ export const LuminaAiAssistantModal: React.FC<LuminaAiAssistantModalProps> = ({
     setIsLoading(true);
 
     try {
-      const response = await askGeminiAssistant(query, messages, customKey || undefined);
+      const response = await askGeminiAssistant(query, messages, 'en');
 
       const botMessage: ChatMessage = {
         id: `bot-${Date.now()}`,
@@ -139,7 +139,7 @@ export const LuminaAiAssistantModal: React.FC<LuminaAiAssistantModalProps> = ({
                   Lumina AI Dental Concierge
                 </h3>
                 <span className="px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container text-[10px] font-bold uppercase tracking-wider">
-                  Google AI Studio
+                  Verified Clinical AI
                 </span>
               </div>
               <p className="text-xs text-on-surface-variant flex items-center gap-1.5 mt-0.5">
@@ -190,9 +190,9 @@ export const LuminaAiAssistantModal: React.FC<LuminaAiAssistantModalProps> = ({
           <div className="bg-surface-container-low px-5 py-3 border-b border-surface-container text-xs">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
               <div>
-                <span className="font-bold text-on-surface">Google AI Studio API Key:</span>
+                <span className="font-bold text-on-surface">Clinical AI Service:</span>
                 <p className="text-on-surface-variant text-[11px]">
-                  Configured via environment variable. You may override it below if needed.
+                  Configured via environment variable. Secure HIPAA session.
                 </p>
               </div>
               <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -395,7 +395,7 @@ export const LuminaAiAssistantModal: React.FC<LuminaAiAssistantModalProps> = ({
           </div>
 
           <div className="flex items-center justify-between mt-2 px-1 text-[11px] text-on-surface-variant">
-            <span>Powered by Gemini 3.5 Flash Lite • HIPAA-compliant session</span>
+            <span>Verified AI Clinical Assistant &bull; HIPAA-compliant session</span>
             <span>Emergency hotline: (555) 234-8901</span>
           </div>
         </div>

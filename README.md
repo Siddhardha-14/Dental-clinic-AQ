@@ -25,8 +25,8 @@ A modern, gentle, and anxiety-free dental clinic web application built with **Re
 - **Real-Time Chair Tracking**: Toggle patient status between *Next Up*, *In Chair*, and *Completed*.
 - **Clinician Charting**: In-line clinical note drafting and saving.
 
-### 4. 🤖 AI Dental Concierge (Google AI Studio)
-- Integrated floating concierge powered by **Gemini 3.5 Flash Lite**.
+### 4. 🤖 AI Dental Concierge
+- Integrated floating concierge supporting bilingual clinical guidance (English & Telugu).
 - Instant 24/7 dental Q&A answering common questions about procedures, pain management, insurance, and aftercare.
 
 ---
@@ -62,7 +62,7 @@ npm install
 
 # Setup environment variables
 cp .env.example .env
-# Add your Gemini API key from Google AI Studio to .env
+# Add your Gemini API key to .env (VITE_GEMINI_API_KEY)
 ```
 
 ### Development Server
@@ -97,3 +97,4 @@ npm run audit:spacing
 ## 📄 License
 
 MIT License. Designed with care for modern gentle dentistry.
+

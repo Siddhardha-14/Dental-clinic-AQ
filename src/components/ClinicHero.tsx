@@ -28,7 +28,7 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
   onOpenProfile: _onOpenProfile,
   onOpenAiAssistant,
 }) => {
-  const { treatments, setSelectedTreatmentForBooking, setActiveTab } = useClinic();
+  const { treatments, setSelectedTreatmentForBooking, setActiveTab, translations } = useClinic();
 
   const handleSelectTreatmentAndBook = (treatmentId: string) => {
     setSelectedTreatmentForBooking(treatmentId);
@@ -54,7 +54,7 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
             className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-surface-container-high border border-outline-variant/30 text-primary text-xs font-semibold mb-6"
           >
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[11px] sm:text-xs">Accepting New Patients &middot; Same-Day Emergency Relief</span>
+            <span className="text-[11px] sm:text-xs">{translations.heroPill}</span>
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -66,15 +66,14 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
               className="lg:col-span-7 space-y-6 text-left"
             >
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-on-surface tracking-tight leading-[1.15]">
-                Modern Dentistry Designed Around Your{' '}
+                {translations.heroTitle1}{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-teal-600">
-                  Comfort &amp; Peace of Mind
+                  {translations.heroTitleHighlight}
                 </span>
               </h1>
 
               <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant max-w-2xl leading-relaxed">
-                Experience anxiety-free dental care with 3D digital intraoral scanning, heated massage
-                chairs, Bose noise-canceling audio, and 100% upfront pricing. No wait times, no surprise bills.
+                {translations.heroSubtitle}
               </p>
 
               {/* Action Buttons */}
@@ -86,7 +85,7 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
                   className="min-h-[48px] px-6 sm:px-7 py-3 rounded-full bg-primary text-on-primary font-bold text-sm sm:text-base shadow-lg hover:bg-primary-container transition-all flex items-center gap-2 group cursor-pointer"
                 >
                   <CalendarCheck className="w-5 h-5" />
-                  <span>Book Your Appointment</span>
+                  <span>{translations.bookApptBtn}</span>
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </motion.button>
 
@@ -98,7 +97,7 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
                     className="min-h-[48px] px-5 sm:px-6 py-3 rounded-full bg-surface-container-lowest text-secondary font-semibold text-xs sm:text-sm border border-secondary/30 hover:bg-secondary/5 transition-all flex items-center gap-2 cursor-pointer shadow-sm"
                   >
                     <Sparkles className="w-4 h-4 text-secondary" />
-                    <span>Ask Dental AI Concierge</span>
+                    <span>{translations.askAiBtn}</span>
                   </motion.button>
                 )}
               </div>
@@ -110,28 +109,28 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
                     <Star className="w-4 h-4 fill-amber-500" />
                     <span>4.9 / 5.0</span>
                   </div>
-                  <p className="text-xs text-on-surface-variant font-medium">1,420+ Reviews</p>
+                  <p className="text-xs text-on-surface-variant font-medium">{translations.ratingReviews}</p>
                 </div>
                 <div className="p-2 sm:p-0">
                   <div className="flex items-center gap-1 text-primary font-bold text-base sm:text-lg">
                     <Clock className="w-4 h-4" />
-                    <span>Zero Wait</span>
+                    <span>{translations.zeroWait}</span>
                   </div>
-                  <p className="text-xs text-on-surface-variant font-medium">Under 3 min seating</p>
+                  <p className="text-xs text-on-surface-variant font-medium">{translations.zeroWaitSub}</p>
                 </div>
                 <div className="p-2 sm:p-0">
                   <div className="flex items-center gap-1 text-teal-700 font-bold text-base sm:text-lg">
                     <ShieldCheck className="w-4 h-4" />
-                    <span>No Surprises</span>
+                    <span>{translations.noSurprises}</span>
                   </div>
-                  <p className="text-xs text-on-surface-variant font-medium">100% Upfront Copay</p>
+                  <p className="text-xs text-on-surface-variant font-medium">{translations.noSurprisesSub}</p>
                 </div>
                 <div className="p-2 sm:p-0">
                   <div className="flex items-center gap-1 text-secondary font-bold text-base sm:text-lg">
                     <Zap className="w-4 h-4" />
-                    <span>Same-Day</span>
+                    <span>{translations.sameDay}</span>
                   </div>
-                  <p className="text-xs text-on-surface-variant font-medium">Urgent Pain Relief</p>
+                  <p className="text-xs text-on-surface-variant font-medium">{translations.sameDaySub}</p>
                 </div>
               </div>
             </motion.div>
@@ -150,12 +149,12 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
                       <Award className="w-6 h-6" />
                     </div>
                     <div>
-                      <h2 className="text-base font-bold text-on-surface">Dr. Sarah Jenkins, DDS</h2>
-                      <p className="text-xs text-on-surface-variant font-medium">Lead Aesthetic &amp; Restorative Clinician</p>
+                      <h2 className="text-base font-bold text-on-surface">{translations.doctorName}</h2>
+                      <p className="text-xs text-on-surface-variant font-medium">{translations.doctorRole}</p>
                     </div>
                   </div>
                   <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
-                    In Clinic Today
+                    {translations.inClinicToday}
                   </span>
                 </div>
 
@@ -163,24 +162,24 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
                   <div className="flex items-start gap-3 p-3 rounded-2xl bg-surface-container-low border border-outline-variant/20">
                     <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                     <div className="text-xs">
-                      <p className="font-bold text-on-surface">Harvard School of Dental Medicine</p>
-                      <p className="text-on-surface-variant">Fellow of the Academy of General Dentistry (FAGD)</p>
+                      <p className="font-bold text-on-surface">{translations.eduTitle}</p>
+                      <p className="text-on-surface-variant">{translations.eduSub}</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3 p-3 rounded-2xl bg-surface-container-low border border-outline-variant/20">
                     <Headphones className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                     <div className="text-xs">
-                      <p className="font-bold text-on-surface">Anxiety-Free Operatory Suite</p>
-                      <p className="text-on-surface-variant">Bose headphones, warm lavender towels &amp; nitrous oxide on demand</p>
+                      <p className="font-bold text-on-surface">{translations.anxietyTitle}</p>
+                      <p className="text-on-surface-variant">{translations.anxietySub}</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3 p-3 rounded-2xl bg-surface-container-low border border-outline-variant/20">
                     <HeartHandshake className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                     <div className="text-xs">
-                      <p className="font-bold text-on-surface">All Major Dental PPOs Accepted</p>
-                      <p className="text-on-surface-variant">Delta Dental, MetLife, Cigna, Guardian, Aetna</p>
+                      <p className="font-bold text-on-surface">{translations.insuranceTitle}</p>
+                      <p className="text-on-surface-variant">{translations.insuranceSub}</p>
                     </div>
                   </div>
                 </div>
@@ -191,7 +190,7 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
                   onClick={onBookClick}
                   className="w-full min-h-[46px] py-3 rounded-2xl bg-primary/10 text-primary font-bold text-sm hover:bg-primary hover:text-on-primary transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Select Date &amp; Time Slot</span>
+                  <span>{translations.selectSlotBtn}</span>
                   <ArrowRight className="w-4 h-4" />
                 </motion.button>
               </div>
@@ -204,13 +203,13 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="text-center max-w-3xl mx-auto mb-10 space-y-2">
           <span className="text-xs uppercase tracking-widest font-bold text-primary px-3 py-1 rounded-full bg-primary/10">
-            Comprehensive Clinical Menu
+            {translations.menuPill}
           </span>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-on-surface">
-            Popular Dental Treatments
+            {translations.menuTitle}
           </h2>
           <p className="text-xs sm:text-sm text-on-surface-variant">
-            Select a service below to immediately jump into our instant booking flow with real-time doctor availability.
+            {translations.menuSubtitle}
           </p>
         </div>
 
@@ -249,7 +248,7 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
 
               <div className="pt-6 mt-6 border-t border-outline-variant/20 flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-on-surface-variant font-medium">Estimated Copay</p>
+                  <p className="text-xs text-on-surface-variant font-medium">{translations.estimatedCopay}</p>
                   <p className="text-base font-bold text-primary">{treatment.estimatedCopay}</p>
                 </div>
                 <motion.button
@@ -258,7 +257,7 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
                   onClick={() => handleSelectTreatmentAndBook(treatment.id)}
                   className="min-h-[44px] px-4 py-2 rounded-xl bg-surface-container-high text-on-surface font-semibold text-xs group-hover:bg-primary group-hover:text-on-primary transition-all flex items-center gap-1.5 cursor-pointer"
                 >
-                  <span>Reserve</span>
+                  <span>{translations.reserveBtn}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </motion.button>
               </div>
@@ -279,9 +278,9 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
               <div className="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center mb-3">
                 <ShieldCheck className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-on-surface">Painless Anesthesia Protocol</h3>
+              <h3 className="text-base font-bold text-on-surface">{translations.assurance1Title}</h3>
               <p className="text-xs text-on-surface-variant leading-relaxed">
-                Computer-controlled Wand dental anesthesia delivers gentle, localized numbing without the needle pinch or facial droop.
+                {translations.assurance1Desc}
               </p>
             </motion.div>
 
@@ -293,9 +292,9 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
               <div className="w-10 h-10 rounded-xl bg-secondary text-on-secondary flex items-center justify-center mb-3">
                 <Sparkles className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-on-surface">Zero Gooey Impressions</h3>
+              <h3 className="text-base font-bold text-on-surface">{translations.assurance2Title}</h3>
               <p className="text-xs text-on-surface-variant leading-relaxed">
-                Our optical 3D intraoral scanner renders photorealistic digital impressions of your teeth in under 60 seconds with micron accuracy.
+                {translations.assurance2Desc}
               </p>
             </motion.div>
 
@@ -307,9 +306,9 @@ export const ClinicHero: React.FC<ClinicHeroProps> = ({
               <div className="w-10 h-10 rounded-xl bg-teal-700 text-on-primary flex items-center justify-center mb-3">
                 <Clock className="w-5 h-5" />
               </div>
-              <h3 className="text-base font-bold text-on-surface">Zero Wait Seating</h3>
+              <h3 className="text-base font-bold text-on-surface">{translations.assurance3Title}</h3>
               <p className="text-xs text-on-surface-variant leading-relaxed">
-                We respect your schedule. Our private operatory suites are prepared in advance so you are seated promptly within 3 minutes.
+                {translations.assurance3Desc}
               </p>
             </motion.div>
           </div>

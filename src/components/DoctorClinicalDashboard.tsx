@@ -35,6 +35,8 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
     updateAppointmentStatus,
     updateDoctorNotes,
     setActiveTab,
+    translations,
+    language,
   } = useClinic();
 
   const [filterStatus, setFilterStatus] = useState<string>('all');
@@ -92,17 +94,19 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs uppercase tracking-widest font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                Live Clinical Session
+                {language === 'te' ? 'ప్రత్యక్ష క్లినికల్ సెషన్' : 'Live Clinical Session'}
               </span>
               <span className="text-xs text-on-surface-variant font-medium">
                 {doctorSession.operatory}
               </span>
             </div>
             <h1 className="text-xl sm:text-3xl font-extrabold text-on-surface tracking-tight mt-1">
-              Welcome, {doctorSession.doctorName}
+              {language === 'te' ? `స్వాగతం, ${doctorSession.doctorName}` : `Welcome, ${doctorSession.doctorName}`}
             </h1>
             <p className="text-xs sm:text-sm text-on-surface-variant">
-              Here is your synchronized treatment schedule &middot; Inspect who is coming, their arrival time, and chief dental complaint.
+              {language === 'te'
+                ? 'ఇది మీ సమకాలీకరించబడిన చికిత్స షెడ్యూల్ · ఎవరు వస్తున్నారు, వారి సమయం మరియు ప్రధాన సమస్యలను పరిశీలించండి.'
+                : 'Here is your synchronized treatment schedule · Inspect who is coming, their arrival time, and chief dental complaint.'}
             </p>
           </div>
         </div>
@@ -117,7 +121,7 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
               className="min-h-[44px] px-4 py-2.5 rounded-xl bg-surface-container-high text-on-surface font-semibold text-xs hover:bg-surface-container-highest transition-all flex items-center gap-2 cursor-pointer"
             >
               <PlusCircle className="w-4 h-4 text-primary" />
-              <span>New Patient</span>
+              <span>{language === 'te' ? 'కొత్త రోగి' : 'New Patient'}</span>
             </motion.button>
           )}
 
@@ -128,7 +132,7 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
             className="min-h-[44px] px-4 py-2.5 rounded-xl bg-primary text-on-primary font-semibold text-xs hover:bg-primary-container shadow transition-all flex items-center gap-2 cursor-pointer"
           >
             <Calendar className="w-4 h-4" />
-            <span>Public Booking View</span>
+            <span>{language === 'te' ? 'పబ్లిక్ బుకింగ్ వీక్షణ' : 'Public Booking View'}</span>
           </motion.button>
 
           <motion.button
@@ -139,7 +143,7 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
             title="Sign out of Doctor Portal"
           >
             <LogOut className="w-4 h-4" />
-            <span>Sign Out</span>
+            <span>{translations.signOutBtn}</span>
           </motion.button>
         </div>
       </motion.div>
@@ -157,10 +161,12 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
           }`}
         >
           <span className="text-[11px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-            Total Today
+            {translations.totalToday}
           </span>
           <p className="text-2xl sm:text-3xl font-extrabold text-on-surface mt-1">{appointments.length}</p>
-          <p className="text-[11px] sm:text-xs text-on-surface-variant mt-0.5">Scheduled Patients</p>
+          <p className="text-[11px] sm:text-xs text-on-surface-variant mt-0.5">
+            {language === 'te' ? 'షెడ్యూల్ చేసిన రోగులు' : 'Scheduled Patients'}
+          </p>
         </motion.div>
 
         <motion.div
@@ -175,12 +181,14 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
         >
           <div className="flex items-center justify-between">
             <span className="text-[11px] sm:text-xs font-bold text-emerald-800 uppercase tracking-wider">
-              In Chair
+              {translations.inChair}
             </span>
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
           </div>
           <p className="text-2xl sm:text-3xl font-extrabold text-emerald-900 mt-1">{inChairCount}</p>
-          <p className="text-[11px] sm:text-xs text-on-surface-variant mt-0.5">Active in Operatory</p>
+          <p className="text-[11px] sm:text-xs text-on-surface-variant mt-0.5">
+            {language === 'te' ? 'ఆపరేటరీలో చికిత్స పొందుతున్నారు' : 'Active in Operatory'}
+          </p>
         </motion.div>
 
         <motion.div
@@ -194,10 +202,12 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
           }`}
         >
           <span className="text-[11px] sm:text-xs font-bold text-amber-700 uppercase tracking-wider">
-            Next Up / Arriving
+            {translations.nextUp}
           </span>
           <p className="text-2xl sm:text-3xl font-extrabold text-amber-900 mt-1">{upcomingCount}</p>
-          <p className="text-[11px] sm:text-xs text-on-surface-variant mt-0.5">Lounge &amp; On Way</p>
+          <p className="text-[11px] sm:text-xs text-on-surface-variant mt-0.5">
+            {language === 'te' ? 'లాంజ్ & వచ్చే దారిలో' : 'Lounge & On Way'}
+          </p>
         </motion.div>
 
         <motion.div
@@ -211,10 +221,12 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
           }`}
         >
           <span className="text-[11px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-            Completed
+            {translations.completed}
           </span>
           <p className="text-2xl sm:text-3xl font-extrabold text-on-surface mt-1">{completedCount}</p>
-          <p className="text-[11px] sm:text-xs text-on-surface-variant mt-0.5">Finished Today</p>
+          <p className="text-[11px] sm:text-xs text-on-surface-variant mt-0.5">
+            {language === 'te' ? 'ఈ రోజు పూర్తయినవి' : 'Finished Today'}
+          </p>
         </motion.div>
       </div>
 
@@ -224,7 +236,7 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
           <Search className="w-4 h-4 text-on-surface-variant absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search patient, tooth, or symptom..."
+            placeholder={translations.searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 rounded-xl border border-outline-variant/30 bg-surface text-on-surface text-base sm:text-xs focus:outline-none focus:border-primary"
@@ -240,7 +252,7 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                 : 'bg-surface-container-low text-on-surface-variant hover:text-on-surface'
             }`}
           >
-            All Patients ({appointments.length})
+            {language === 'te' ? 'అందరు రోగులు' : 'All Patients'} ({appointments.length})
           </button>
           <button
             onClick={() => setFilterStatus('chair')}
@@ -250,7 +262,7 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                 : 'bg-surface-container-low text-on-surface-variant hover:text-on-surface'
             }`}
           >
-            In Chair ({inChairCount})
+            {translations.inChair} ({inChairCount})
           </button>
           <button
             onClick={() => setFilterStatus('upcoming')}
@@ -260,7 +272,7 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                 : 'bg-surface-container-low text-on-surface-variant hover:text-on-surface'
             }`}
           >
-            Next Up ({upcomingCount})
+            {translations.nextUp} ({upcomingCount})
           </button>
           <button
             onClick={() => setFilterStatus('completed')}
@@ -270,7 +282,7 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                 : 'bg-surface-container-low text-on-surface-variant hover:text-on-surface'
             }`}
           >
-            Completed ({completedCount})
+            {translations.completed} ({completedCount})
           </button>
         </div>
       </div>
@@ -279,10 +291,12 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
           <h2 className="text-lg sm:text-xl font-bold text-on-surface">
-            Today&apos;s Arriving Patients ({filteredAppointments.length})
+            {translations.todaysPatientsTitle} ({filteredAppointments.length})
           </h2>
           <span className="text-xs text-on-surface-variant">
-            Live auto-synced with patient online reservations
+            {language === 'te'
+              ? 'ఆన్‌లైన్ రిజర్వేషన్లతో ప్రత్యక్ష సమకాలీకరణ'
+              : 'Live auto-synced with patient online reservations'}
           </span>
         </div>
 
@@ -386,7 +400,7 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                         onClick={() => updateAppointmentStatus(apt.id, 'In Chair')}
                         className="min-h-[44px] px-3.5 py-1.5 rounded-xl bg-emerald-700 text-white font-bold text-xs hover:bg-emerald-800 transition-all flex items-center gap-1 cursor-pointer"
                       >
-                        <span>Seat in Chair</span>
+                        <span>{translations.seatInChairBtn}</span>
                       </motion.button>
                     )}
 
@@ -398,7 +412,7 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                         className="min-h-[44px] px-3.5 py-1.5 rounded-xl bg-surface-container-high text-on-surface font-bold text-xs hover:bg-surface-container-highest transition-all flex items-center gap-1 cursor-pointer"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
-                        <span>Mark Completed</span>
+                        <span>{translations.markCompletedBtn}</span>
                       </motion.button>
                     )}
                   </div>
@@ -410,7 +424,7 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                   <div className="md:col-span-8 space-y-3">
                     <div>
                       <span className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant block mb-1">
-                        Procedure &amp; Chief Complaint
+                        {language === 'te' ? 'విధానం & ప్రధాన సమస్య' : 'Procedure & Chief Complaint'}
                       </span>
                       <p className="text-sm font-bold text-on-surface">{apt.treatmentName}</p>
                       <p className="text-xs text-on-surface mt-1 bg-surface-container-low p-3 rounded-2xl border border-outline-variant/20 leading-relaxed font-medium">
@@ -421,14 +435,18 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                     <div className="flex flex-wrap items-center gap-4 text-xs">
                       {apt.toothNumbers && (
                         <div>
-                          <span className="text-on-surface-variant font-medium">Tooth: </span>
+                          <span className="text-on-surface-variant font-medium">
+                            {language === 'te' ? 'పన్ను: ' : 'Tooth: '}
+                          </span>
                           <span className="font-bold text-on-surface">{apt.toothNumbers}</span>
                         </div>
                       )}
 
                       {apt.painScale !== undefined && apt.painScale > 0 && (
                         <div className="flex items-center gap-1">
-                          <span className="text-on-surface-variant font-medium">Pain Score: </span>
+                          <span className="text-on-surface-variant font-medium">
+                            {language === 'te' ? 'నొప్పి స్కోర్: ' : 'Pain Score: '}
+                          </span>
                           <span
                             className={`font-bold px-2 py-0.5 rounded-full text-xs ${
                               apt.painScale >= 6
@@ -458,14 +476,14 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                       {apt.preferences?.boseHeadphones && (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface text-[11px] font-medium">
                           <Headphones className="w-3 h-3 text-secondary" />
-                          <span>Bose Headphones</span>
+                          <span>{translations.prefHeadphones}</span>
                         </span>
                       )}
 
                       {apt.preferences?.nitrousOxide && (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface text-[11px] font-medium">
                           <Sparkles className="w-3 h-3 text-primary" />
-                          <span>Nitrous Oxide</span>
+                          <span>{translations.prefNitrous}</span>
                         </span>
                       )}
                     </div>
@@ -476,7 +494,7 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
                         <span className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
-                          Doctor Clinical Notes
+                          {translations.clinicalNotesTitle}
                         </span>
                         {!isEditingNote && (
                           <button
@@ -484,7 +502,7 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                             className="min-h-[44px] text-primary hover:underline text-xs font-semibold flex items-center gap-1 cursor-pointer"
                           >
                             <FileEdit className="w-3 h-3" />
-                            <span>{apt.doctorNotes ? 'Edit' : 'Add Note'}</span>
+                            <span>{apt.doctorNotes ? (language === 'te' ? 'సవరించు' : 'Edit') : translations.addNoteBtn}</span>
                           </button>
                         )}
                       </div>
@@ -495,7 +513,7 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                             rows={3}
                             value={noteDraft}
                             onChange={(e) => setNoteDraft(e.target.value)}
-                            placeholder="Type clinical diagnosis, anesthetic dosage, or restorative plan..."
+                            placeholder={language === 'te' ? 'క్లినికల్ రోగ నిర్ధారణ, అనస్థీషియా మోతాదును టైప్ చేయండి...' : 'Type clinical diagnosis, anesthetic dosage, or restorative plan...'}
                             className="w-full p-2 text-base sm:text-xs rounded-xl border border-primary bg-surface text-on-surface focus:outline-none"
                           />
                           <div className="flex justify-end gap-2">
@@ -503,20 +521,20 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                               onClick={() => setEditingNoteId(null)}
                               className="min-h-[44px] px-3 py-1 rounded-lg text-xs font-medium text-on-surface-variant hover:bg-surface-container"
                             >
-                              Cancel
+                              {language === 'te' ? 'రద్దు' : 'Cancel'}
                             </button>
                             <button
                               onClick={() => handleSaveNote(apt.id)}
                               className="min-h-[44px] px-3.5 py-1 rounded-lg bg-primary text-on-primary text-xs font-bold flex items-center gap-1"
                             >
                               <Save className="w-3 h-3" />
-                              <span>Save</span>
+                              <span>{language === 'te' ? 'భద్రపరచు' : 'Save'}</span>
                             </button>
                           </div>
                         </div>
                       ) : (
                         <p className="text-xs text-on-surface leading-relaxed italic">
-                          {apt.doctorNotes || 'No clinician note added yet. Click "Add Note" to chart.'}
+                          {apt.doctorNotes || (language === 'te' ? 'ఇంకా క్లినికల్ నోట్ జోడించబడలేదు. నమోదు చేయడానికి "నోట్ జోడించండి" క్లిక్ చేయండి.' : 'No clinician note added yet. Click "Add Note" to chart.')}
                         </p>
                       )}
                     </div>

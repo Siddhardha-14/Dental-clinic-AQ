@@ -26,12 +26,12 @@ export interface UnifiedAppointmentBookingProps {
   readonly onGoToDoctorPortal?: () => void;
 }
 
-const AVAILABLE_DATES = [
-  { id: 'today', label: 'Today', dateStr: 'Today, Oct 24', sub: 'Urgent/Fast' },
-  { id: 'tomorrow', label: 'Tomorrow', dateStr: 'Tomorrow, Oct 25', sub: 'Available' },
-  { id: 'sat', label: 'Saturday', dateStr: 'Sat, Oct 26', sub: 'Morning slots' },
-  { id: 'mon', label: 'Monday', dateStr: 'Mon, Oct 28', sub: 'Full day' },
-  { id: 'tue', label: 'Tuesday', dateStr: 'Tue, Oct 29', sub: 'Available' },
+const getAvailableDates = (lang: string) => [
+  { id: 'today', label: lang === 'te' ? 'ఈ రోజు' : 'Today', dateStr: lang === 'te' ? 'ఈ రోజు, అక్టోబర్ 24' : 'Today, Oct 24', sub: lang === 'te' ? 'అత్యవసరం/త్వరితం' : 'Urgent/Fast' },
+  { id: 'tomorrow', label: lang === 'te' ? 'రేపు' : 'Tomorrow', dateStr: lang === 'te' ? 'రేపు, అక్టోబర్ 25' : 'Tomorrow, Oct 25', sub: lang === 'te' ? 'అందుబాటులో ఉంది' : 'Available' },
+  { id: 'sat', label: lang === 'te' ? 'శనివారం' : 'Saturday', dateStr: lang === 'te' ? 'శని, అక్టోబర్ 26' : 'Sat, Oct 26', sub: lang === 'te' ? 'ఉదయం స్లాట్లు' : 'Morning slots' },
+  { id: 'mon', label: lang === 'te' ? 'సోమవారం' : 'Monday', dateStr: lang === 'te' ? 'సోమ, అక్టోబర్ 28' : 'Mon, Oct 28', sub: lang === 'te' ? 'పూర్తి రోజు' : 'Full day' },
+  { id: 'tue', label: lang === 'te' ? 'మంగళవారం' : 'Tuesday', dateStr: lang === 'te' ? 'మంగళ, అక్టోబర్ 29' : 'Tue, Oct 29', sub: lang === 'te' ? 'అందుబాటులో ఉంది' : 'Available' },
 ];
 
 const TIME_SLOTS = {
@@ -50,6 +50,8 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
     setSelectedTreatmentForBooking,
     bookAppointment,
     setActiveTab,
+    translations,
+    language,
   } = useClinic();
 
   // Booking Form State
@@ -76,11 +78,19 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
     setErrorMessage('');
 
     if (!fullName.trim()) {
-      setErrorMessage('Please enter your full name to reserve your visit.');
+      setErrorMessage(
+        language === 'te'
+          ? 'దయచేసి మీ పూర్తి పేరును నమోదు చేయండి.'
+          : 'Please enter your full name to reserve your visit.'
+      );
       return;
     }
     if (!phoneNumber.trim()) {
-      setErrorMessage('Please provide a mobile phone number for instant SMS confirmation.');
+      setErrorMessage(
+        language === 'te'
+          ? 'తక్షణ SMS నిర్ధారణ కోసం దయచేసి మొబైల్ ఫోన్ నంబర్‌ను అందించండి.'
+          : 'Please provide a mobile phone number for instant SMS confirmation.'
+      );
       return;
     }
 
@@ -142,13 +152,13 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
 
           <div>
             <span className="text-xs uppercase tracking-widest font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800">
-              Appointment Reserved &middot; Real-Time Synced
+              {translations.passConfirmedBadge}
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-on-surface mt-2">
-              You&apos;re All Set, {confirmedAppointment.patientName}!
+              {translations.passConfirmedTitle}, {confirmedAppointment.patientName}!
             </h2>
             <p className="text-xs sm:text-sm text-on-surface-variant max-w-lg mx-auto mt-2">
-              Your appointment is confirmed and immediately sent to Dr. Sarah Jenkins&apos;s live schedule.
+              {translations.passConfirmedSub}
             </p>
           </div>
 
@@ -156,7 +166,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
           <div className="bg-surface-container-low rounded-2xl p-5 sm:p-6 border border-outline-variant/30 text-left max-w-xl mx-auto space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-outline-variant/30">
               <div>
-                <span className="text-xs text-on-surface-variant font-medium">Confirmation Pass</span>
+                <span className="text-xs text-on-surface-variant font-medium">{translations.passIdLabel}</span>
                 <p className="text-base sm:text-lg font-mono font-bold text-primary">{confirmedAppointment.id}</p>
               </div>
               <span className="px-3 py-1 rounded-full bg-surface-container-highest text-on-surface text-xs font-bold">
@@ -166,26 +176,26 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div>
-                <p className="text-on-surface-variant font-medium">Procedure</p>
+                <p className="text-on-surface-variant font-medium">{translations.passProcedure}</p>
                 <p className="font-bold text-on-surface text-sm">{confirmedAppointment.treatmentName}</p>
               </div>
               <div>
-                <p className="text-on-surface-variant font-medium">Clinician</p>
+                <p className="text-on-surface-variant font-medium">{translations.passClinician}</p>
                 <p className="font-bold text-on-surface text-sm">{confirmedAppointment.doctorName}</p>
               </div>
               <div>
-                <p className="text-on-surface-variant font-medium">When</p>
+                <p className="text-on-surface-variant font-medium">{translations.passWhen}</p>
                 <p className="font-bold text-primary text-sm">{confirmedAppointment.date} &middot; {confirmedAppointment.timeSlot}</p>
               </div>
               <div>
-                <p className="text-on-surface-variant font-medium">Location</p>
+                <p className="text-on-surface-variant font-medium">{translations.passLocation}</p>
                 <p className="font-bold text-on-surface text-sm">450 Sutter St, Ste 1800, SF</p>
               </div>
             </div>
 
             {confirmedAppointment.chiefComplaint && (
               <div className="pt-2 border-t border-outline-variant/20 text-xs">
-                <p className="text-on-surface-variant font-medium">Clinical Concern / Note</p>
+                <p className="text-on-surface-variant font-medium">{language === 'te' ? 'క్లినికల్ సమస్య / గమనిక' : 'Clinical Concern / Note'}</p>
                 <p className="text-on-surface font-medium italic mt-0.5">{confirmedAppointment.chiefComplaint}</p>
               </div>
             )}
@@ -200,7 +210,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
               className="min-h-[48px] px-6 py-3 rounded-full bg-primary text-on-primary font-bold text-sm shadow-md hover:bg-primary-container transition-all flex items-center gap-2 cursor-pointer"
             >
               <CalendarPlus className="w-4 h-4" />
-              <span>Book Another Visit</span>
+              <span>{translations.bookAnotherBtn}</span>
             </motion.button>
 
             <motion.button
@@ -210,7 +220,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
               className="min-h-[48px] px-5 py-3 rounded-full bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-all flex items-center gap-2 text-xs font-bold cursor-pointer"
             >
               <Printer className="w-4 h-4 text-on-surface-variant" />
-              <span>Print Pass</span>
+              <span>{translations.printPassBtn}</span>
             </motion.button>
 
             <motion.button
@@ -222,7 +232,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
               }}
               className="min-h-[48px] px-5 py-3 rounded-full bg-surface-container-lowest text-on-surface-variant border border-outline-variant/40 hover:text-on-surface transition-all flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
             >
-              <span>Done &amp; Return Home</span>
+              <span>{translations.returnHomeBtn}</span>
             </motion.button>
           </div>
         </motion.div>
@@ -236,13 +246,13 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
       <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold">
           <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-          <span>Real-Time Doctor Availability</span>
+          <span>{translations.bookingPill}</span>
         </div>
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-on-surface tracking-tight">
-          Reserve Your Dental Visit
+          {translations.bookingTitle}
         </h2>
         <p className="text-xs sm:text-sm text-on-surface-variant">
-          Follow the simple steps below. Your appointment confirms immediately with zero cancellation fees up to 24h prior.
+          {translations.bookingSubtitle}
         </p>
       </div>
 
@@ -255,8 +265,8 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
                 1
               </span>
               <div>
-                <h3 className="text-base sm:text-lg font-bold text-on-surface">Choose Treatment or Concern</h3>
-                <p className="text-xs text-on-surface-variant">Select the primary service needed for your visit</p>
+                <h3 className="text-base sm:text-lg font-bold text-on-surface">{translations.step1Title}</h3>
+                <p className="text-xs text-on-surface-variant">{translations.step1Sub}</p>
               </div>
             </div>
           </div>
@@ -294,7 +304,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
                   </div>
 
                   <div className="pt-3 mt-3 border-t border-outline-variant/20 flex items-center justify-between text-xs">
-                    <span className="text-on-surface-variant font-medium">Copay</span>
+                    <span className="text-on-surface-variant font-medium">{translations.estimatedCopay}</span>
                     <span className="font-bold text-primary">{treatment.estimatedCopay}</span>
                   </div>
                 </motion.div>
@@ -311,22 +321,22 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
                 2
               </span>
               <div>
-                <h3 className="text-base sm:text-lg font-bold text-on-surface">Select Date &amp; Time</h3>
-                <p className="text-xs text-on-surface-variant">With Dr. Sarah Jenkins, DDS (Panoramic Suite 1)</p>
+                <h3 className="text-base sm:text-lg font-bold text-on-surface">{translations.step2Title}</h3>
+                <p className="text-xs text-on-surface-variant">{translations.step2Sub}</p>
               </div>
             </div>
             <span className="text-xs font-semibold text-primary px-3 py-1 rounded-full bg-primary/10 hidden sm:inline-block">
-              Selected: {selectedDate} @ {selectedSlot}
+              {language === 'te' ? 'ఎంపికైంది:' : 'Selected:'} {selectedDate} @ {selectedSlot}
             </span>
           </div>
 
           {/* Date Selector Pills */}
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-              Available Dates
+              {translations.availableDates}
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-              {AVAILABLE_DATES.map((d) => {
+              {getAvailableDates(language).map((d) => {
                 const isSelected = selectedDate === d.dateStr;
                 return (
                   <motion.button
@@ -356,7 +366,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-primary" />
-                <span>Morning Sessions</span>
+                <span>{translations.morningSlots}</span>
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 {TIME_SLOTS.morning.map((slot) => {
@@ -384,7 +394,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-secondary" />
-                <span>Afternoon Sessions</span>
+                <span>{translations.afternoonSlots}</span>
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 {TIME_SLOTS.afternoon.map((slot) => {
@@ -412,7 +422,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-teal-700" />
-                <span>Evening Sessions</span>
+                <span>{translations.eveningSlots}</span>
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 {TIME_SLOTS.evening.map((slot) => {
@@ -445,22 +455,22 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
               3
             </span>
             <div>
-              <h3 className="text-base sm:text-lg font-bold text-on-surface">Patient Details &amp; Reason for Visit</h3>
-              <p className="text-xs text-on-surface-variant">Helps Dr. Jenkins prepare your care plan in advance</p>
+              <h3 className="text-base sm:text-lg font-bold text-on-surface">{translations.step3Title}</h3>
+              <p className="text-xs text-on-surface-variant">{translations.step3Sub}</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-bold text-on-surface mb-2">
-                Full Name *
+                {translations.fullNameLabel} *
               </label>
               <div className="relative">
                 <User className="w-4 h-4 text-on-surface-variant absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Maya Ramirez"
+                  placeholder={language === 'te' ? 'ఉదా. రవి వర్మ' : 'e.g. Maya Ramirez'}
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-outline-variant/40 bg-surface text-on-surface text-base sm:text-sm focus:outline-none focus:border-primary"
@@ -470,7 +480,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
 
             <div>
               <label className="block text-xs font-bold text-on-surface mb-2">
-                Mobile Phone (SMS Reminders) *
+                {translations.phoneLabel} *
               </label>
               <div className="relative">
                 <Phone className="w-4 h-4 text-on-surface-variant absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -487,7 +497,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
 
             <div>
               <label className="block text-xs font-bold text-on-surface mb-2">
-                Email Address
+                {translations.emailLabel}
               </label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-on-surface-variant absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -504,11 +514,15 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
 
           <div>
             <label className="block text-xs font-bold text-on-surface mb-2">
-              What brings you in? (Symptoms, tooth pain, or goals)
+              {translations.symptomLabel}
             </label>
             <textarea
               rows={2}
-              placeholder="e.g. Sensitivity to cold water on upper right tooth, or regular 6-month checkup."
+              placeholder={
+                language === 'te'
+                  ? 'ఉదా. చల్లటి నీరు తాగినప్పుడు పంటి నొప్పి, లేదా సాధారణ దంత తనిఖీ.'
+                  : 'e.g. Sensitivity to cold water on upper right tooth, or regular 6-month checkup.'
+              }
               value={chiefComplaint}
               onChange={(e) => setChiefComplaint(e.target.value)}
               className="w-full px-4 py-2.5 rounded-xl border border-outline-variant/40 bg-surface text-on-surface text-base sm:text-sm focus:outline-none focus:border-primary"
@@ -518,7 +532,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
           {/* Comfort Preferences & Clinical Alerts */}
           <div className="pt-2 border-t border-outline-variant/20">
             <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2">
-              Comfort &amp; Clinical Preferences
+              {translations.comfortPrefsTitle}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
               <label className="flex items-center gap-2 p-3 rounded-xl bg-surface-container-low border border-outline-variant/20 cursor-pointer text-xs font-medium">
@@ -528,7 +542,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
                   onChange={(e) => setWantsHeadphones(e.target.checked)}
                   className="rounded text-primary focus:ring-primary w-4 h-4"
                 />
-                <span>Bose Headphones</span>
+                <span>{translations.prefHeadphones}</span>
               </label>
 
               <label className="flex items-center gap-2 p-3 rounded-xl bg-surface-container-low border border-outline-variant/20 cursor-pointer text-xs font-medium">
@@ -538,7 +552,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
                   onChange={(e) => setWantsNitrous(e.target.checked)}
                   className="rounded text-primary focus:ring-primary w-4 h-4"
                 />
-                <span>Nitrous Oxide Gas</span>
+                <span>{translations.prefNitrous}</span>
               </label>
 
               <label className="flex items-center gap-2 p-3 rounded-xl bg-surface-container-low border border-outline-variant/20 cursor-pointer text-xs font-medium">
@@ -548,7 +562,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
                   onChange={(e) => setHasPenicillinAllergy(e.target.checked)}
                   className="rounded text-primary focus:ring-primary w-4 h-4"
                 />
-                <span>Penicillin Allergy</span>
+                <span>{translations.prefPenicillin}</span>
               </label>
 
               <label className="flex items-center gap-2 p-3 rounded-xl bg-surface-container-low border border-outline-variant/20 cursor-pointer text-xs font-medium">
@@ -558,7 +572,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
                   onChange={(e) => setHasDentalAnxiety(e.target.checked)}
                   className="rounded text-primary focus:ring-primary w-4 h-4"
                 />
-                <span>Dental Anxiety</span>
+                <span>{translations.prefAnxiety}</span>
               </label>
             </div>
           </div>
@@ -569,41 +583,41 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-outline-variant/30">
             <div>
               <span className="text-xs uppercase tracking-wider font-bold text-primary">
-                Final Step &middot; Instant Reservation
+                {language === 'te' ? 'తుది దశ · తక్షణ రిజర్వేషన్' : 'Final Step · Instant Reservation'}
               </span>
               <h3 className="text-lg sm:text-xl font-extrabold text-on-surface mt-0.5">
-                Review &amp; Confirm Booking
+                {translations.step4Title}
               </h3>
             </div>
 
             <div className="flex items-center gap-2 text-xs text-on-surface-variant font-medium bg-surface-container-lowest px-3.5 py-1.5 rounded-full border border-outline-variant/30 self-start sm:self-auto">
               <Lock className="w-3.5 h-3.5 text-secondary" />
-              <span>HIPAA Encrypted &amp; 100% Guaranteed</span>
+              <span>{translations.hipaaBadge}</span>
             </div>
           </div>
 
           {/* Quick Summary Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-surface-container-lowest p-4 rounded-2xl border border-outline-variant/20 text-xs">
             <div>
-              <p className="text-on-surface-variant font-medium">Selected Treatment</p>
+              <p className="text-on-surface-variant font-medium">{translations.passProcedure}</p>
               <p className="font-bold text-on-surface text-sm mt-0.5">{currentTreatment.name}</p>
               <p className="text-primary font-semibold">{currentTreatment.duration}</p>
             </div>
 
             <div>
-              <p className="text-on-surface-variant font-medium">Clinician</p>
+              <p className="text-on-surface-variant font-medium">{translations.passClinician}</p>
               <p className="font-bold text-on-surface text-sm mt-0.5">Dr. Sarah Jenkins, DDS</p>
               <p className="text-on-surface-variant">Operatory 1 (Panoramic)</p>
             </div>
 
             <div>
-              <p className="text-on-surface-variant font-medium">Date &amp; Time Slot</p>
+              <p className="text-on-surface-variant font-medium">{translations.passWhen}</p>
               <p className="font-bold text-primary text-sm mt-0.5">{selectedDate}</p>
               <p className="font-bold text-on-surface">{selectedSlot}</p>
             </div>
 
             <div>
-              <p className="text-on-surface-variant font-medium">Estimated Patient Copay</p>
+              <p className="text-on-surface-variant font-medium">{translations.estimatedCopay}</p>
               <p className="text-lg font-extrabold text-primary mt-0.5">{currentTreatment.estimatedCopay}</p>
               <p className="text-on-surface-variant">PPO / Self-Pay Eligible</p>
             </div>
@@ -625,12 +639,12 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
               className="w-full min-h-[54px] rounded-2xl bg-primary text-on-primary font-bold text-sm sm:text-base shadow-xl hover:bg-primary-container transition-all flex items-center justify-center gap-2.5 cursor-pointer"
             >
               <Lock className="w-5 h-5" />
-              <span>Confirm &amp; Reserve Appointment</span>
+              <span>{translations.confirmBtn}</span>
               <ArrowRight className="w-5 h-5" />
             </motion.button>
 
             <p className="text-center text-xs text-on-surface-variant">
-              Free rescheduling &amp; cancellations up to 24h prior &middot; Confirmation sent via SMS &amp; Email
+              {translations.confirmGuarantee}
             </p>
           </div>
         </div>

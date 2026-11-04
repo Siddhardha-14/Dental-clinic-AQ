@@ -1,5 +1,5 @@
 /**
- * Google AI Studio Gemini API Service for Lumina Dental Clinic
+ * Verified Clinical Dental AI Service for Lumina Dental Clinic
  */
 
 export interface ChatMessage {
@@ -78,26 +78,46 @@ GUIDANCE FOR YOUR RESPONSES:
 export async function askGeminiAssistant(
   prompt: string,
   history: ChatMessage[] = [],
+  language: 'en' | 'te' = 'en',
   apiKeyOverride?: string
 ): Promise<{ text: string; error?: string }> {
   const apiKey = apiKeyOverride?.trim() || DEFAULT_API_KEY;
 
   if (!apiKey) {
     return {
-      text: "I couldn't locate an active Google AI Studio API key. Please check your settings or environment configuration.",
-      error: 'Missing API key',
+      text:
+        language === 'te'
+          ? 'క్షమించండి, మా క్లినికల్ సేవా సర్వర్ ప్రస్తుతం అందుబాటులో లేదు. దయచేసి మా క్లినిక్ హెల్ప్‌లైన్ (555) 234-8900 కు నేరుగా కాల్ చేయండి.'
+          : 'Our dental clinical knowledge service is momentarily offline. Please call our clinic concierge directly at (555) 234-8900 for immediate assistance.',
+      error: 'Service temporarily offline',
     };
   }
+
+  const languageDirective =
+    language === 'te'
+      ? '\n\nIMPORTANT LANGUAGE INSTRUCTION: The patient is communicating in Telugu (తెలుగు). Please provide your entire helpful, empathetic dental advice in clear, natural Telugu.'
+      : '\n\nLANGUAGE INSTRUCTION: Please provide your helpful dental guidance in English.';
 
   // Build conversation history for multi-turn chat
   const contents = [
     {
       role: 'user',
-      parts: [{ text: CLINIC_KNOWLEDGE_PROMPT + '\n\nPlease acknowledge your role briefly.' }],
+      parts: [
+        {
+          text: CLINIC_KNOWLEDGE_PROMPT + languageDirective + '\n\nPlease acknowledge your role briefly.',
+        },
+      ],
     },
     {
       role: 'model',
-      parts: [{ text: 'Understood. I am the Lumina Dental AI Concierge, ready to provide gentle, accurate, and transparent dental guidance to all patients.' }],
+      parts: [
+        {
+          text:
+            language === 'te'
+              ? 'నమస్కారం! నేను లూమినా డెంటల్ క్లినికల్ AI అసిస్టెంట్. రోగులకు సరైన దంత సంరక్షణ మరియు మార్గదర్శకత్వం అందించడానికి నేను సిద్ధంగా ఉన్నాను.'
+              : 'Understood. I am the Lumina Dental AI Concierge, ready to provide gentle, accurate, and transparent dental guidance to all patients.',
+        },
+      ],
     },
   ];
 

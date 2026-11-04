@@ -296,7 +296,7 @@ export const LuminaTopNav: React.FC<LuminaTopNavProps> = ({
                 className="w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold bg-secondary-fixed text-on-secondary-fixed-variant flex items-center gap-2 cursor-pointer"
               >
                 <span className="material-symbols-outlined text-lg">smart_toy</span>
-                <span>Ask Lumina AI Assistant (Google AI)</span>
+                <span>Ask Lumina AI Assistant</span>
               </button>
             )}
 
