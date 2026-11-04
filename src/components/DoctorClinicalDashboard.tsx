@@ -79,13 +79,13 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fadeIn">
+    <div className="w-full max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-5 sm:py-8 space-y-6 sm:space-y-8 animate-fadeIn">
       {/* 1. Doctor Header & Session Banner */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="bg-surface-container-lowest rounded-3xl p-5 sm:p-8 border border-outline-variant/30 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6"
+        className="bg-surface-container-lowest rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-outline-variant/30 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6"
       >
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-primary text-on-primary flex items-center justify-center shadow-md shrink-0">
@@ -319,7 +319,7 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: idx * 0.05 }}
-                className={`bg-surface-container-lowest rounded-3xl p-5 sm:p-7 border transition-all shadow-sm ${
+                className={`bg-surface-container-lowest rounded-2xl sm:rounded-3xl p-4 sm:p-7 border transition-all shadow-sm ${
                   apt.status === 'In Chair'
                     ? 'border-2 border-emerald-600 ring-2 ring-emerald-500/10'
                     : apt.isNewBooking

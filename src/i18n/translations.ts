@@ -471,3 +471,4 @@ export const translations: Record<Language, Translations> = {
     copyrightText: 'లూమినా డెంటల్ స్టూడియో. సర్వహక్కులు ప్రత్యేకించబడ్డాయి.',
   },
 };
+

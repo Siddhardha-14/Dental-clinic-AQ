@@ -241,9 +241,9 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
   }
 
   return (
-    <section id="booking-section" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 scroll-mt-24">
+    <section id="booking-section" className="max-w-5xl mx-auto px-3.5 sm:px-6 lg:px-8 py-8 sm:py-10 scroll-mt-24">
       {/* Header */}
-      <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
+      <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10 space-y-2">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold">
           <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
           <span>{translations.bookingPill}</span>
@@ -256,9 +256,9 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
         </p>
       </div>
 
-      <form onSubmit={handleConfirmReservation} className="space-y-10">
+      <form onSubmit={handleConfirmReservation} className="space-y-8 sm:space-y-10">
         {/* STEP 1: Select Dental Treatment */}
-        <div className="bg-surface-container-lowest rounded-3xl p-5 sm:p-8 border border-outline-variant/30 shadow-sm space-y-4">
+        <div className="bg-surface-container-lowest rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-outline-variant/30 shadow-sm space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-outline-variant/20">
             <div className="flex items-center gap-3">
               <span className="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm">
@@ -314,7 +314,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
         </div>
 
         {/* STEP 2: Choose Date & Time Slot */}
-        <div className="bg-surface-container-lowest rounded-3xl p-5 sm:p-8 border border-outline-variant/30 shadow-sm space-y-6">
+        <div className="bg-surface-container-lowest rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-outline-variant/30 shadow-sm space-y-5 sm:space-y-6">
           <div className="flex items-center justify-between pb-3 border-b border-outline-variant/20">
             <div className="flex items-center gap-3">
               <span className="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm">
@@ -449,7 +449,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
         </div>
 
         {/* STEP 3: Patient Information & Clinical Context */}
-        <div className="bg-surface-container-lowest rounded-3xl p-5 sm:p-8 border border-outline-variant/30 shadow-sm space-y-6">
+        <div className="bg-surface-container-lowest rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-outline-variant/30 shadow-sm space-y-5 sm:space-y-6">
           <div className="flex items-center gap-3 pb-3 border-b border-outline-variant/20">
             <span className="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm">
               3
@@ -579,7 +579,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
         </div>
 
         {/* STEP 4: IN-LINE CONFIRMATION DOCK */}
-        <div className="bg-surface-container-high rounded-3xl p-5 sm:p-8 border-2 border-primary/30 shadow-lg space-y-6">
+        <div className="bg-surface-container-high rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-primary/30 shadow-lg space-y-5 sm:space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-outline-variant/30">
             <div>
               <span className="text-xs uppercase tracking-wider font-bold text-primary">

@@ -74,40 +74,40 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fadeIn">
+    <div className="w-full max-w-5xl mx-auto px-3.5 sm:px-6 lg:px-8 py-5 sm:py-8 space-y-6 sm:space-y-8 animate-fadeIn">
       {/* 1. Profile Page Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="bg-surface-container-lowest rounded-3xl p-5 sm:p-8 border border-outline-variant/30 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-6"
+        className="bg-surface-container-lowest rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-outline-variant/30 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6"
       >
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-surface-container-high text-primary flex items-center justify-center border border-outline-variant/30 shadow-sm shrink-0">
+        <div className="flex items-start sm:items-center gap-3.5 sm:gap-4">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-surface-container-high text-primary flex items-center justify-center border border-outline-variant/30 shadow-sm shrink-0">
             {doctorSession.isAuthenticated ? (
-              <Stethoscope className="w-7 h-7 sm:w-8 sm:h-8 text-primary" />
+              <Stethoscope className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
             ) : (
-              <User className="w-7 h-7 sm:w-8 sm:h-8 text-on-surface-variant" />
+              <User className="w-6 h-6 sm:w-8 sm:h-8 text-on-surface-variant" />
             )}
           </div>
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs uppercase tracking-widest font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1">
+              <span className="text-[10px] sm:text-xs uppercase tracking-normal sm:tracking-wider font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary whitespace-nowrap">
                 {doctorSession.isAuthenticated
                   ? (language === 'te' ? 'వైద్యుల ఖాతా' : 'Clinician Account')
                   : (language === 'te' ? 'రోగి & సభ్యుల పోర్టల్' : 'Patient & Member Portal')}
               </span>
               {doctorSession.isAuthenticated && (
-                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
+                <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full whitespace-nowrap">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
                   <span>{language === 'te' ? 'ఆన్‌లైన్ · ఆపరేటరీ 1' : 'Online · Operatory 1'}</span>
                 </span>
               )}
             </div>
-            <h1 className="text-xl sm:text-3xl font-extrabold text-on-surface tracking-tight mt-1">
+            <h1 className="text-lg sm:text-3xl font-extrabold text-on-surface tracking-tight mt-0.5 leading-tight">
               {doctorSession.isAuthenticated ? doctorSession.doctorName : translations.profileTitle}
             </h1>
-            <p className="text-xs sm:text-sm text-on-surface-variant">
+            <p className="text-xs sm:text-sm text-on-surface-variant mt-0.5 leading-relaxed">
               {doctorSession.isAuthenticated
                 ? (language === 'te' ? 'ప్రధాన వైద్యులు · ఆపరేటరీ 1 (పనోరమిక్ సూట్)' : 'Lead Clinician · Operatory 1 (Panoramic Suite)')
                 : translations.profileSubtitle}
@@ -120,7 +120,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={doctorLogout}
-            className="min-h-[44px] px-4 py-2.5 rounded-xl border border-error/30 text-error hover:bg-error/10 font-semibold text-xs transition-all flex items-center gap-2 self-start sm:self-auto cursor-pointer"
+            className="min-h-[44px] px-4 py-2.5 rounded-xl border border-error/30 text-error hover:bg-error/10 font-semibold text-xs transition-all flex items-center justify-center gap-2 self-stretch sm:self-auto cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
             <span>{translations.signOutBtn}</span>
@@ -128,31 +128,31 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
         )}
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-start">
         {/* LEFT COLUMN: DOCTOR CLINICAL LOGIN SECTION */}
         <div className="lg:col-span-7 space-y-6">
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: 0.1 }}
-            className="bg-surface-container-lowest rounded-3xl p-5 sm:p-8 border-2 border-primary/20 shadow-md space-y-6"
+            className="bg-surface-container-lowest rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-outline-variant/40 shadow-sm space-y-5 sm:space-y-6"
           >
-            <div className="flex items-center justify-between pb-4 border-b border-outline-variant/20">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-primary text-on-primary flex items-center justify-center shadow-sm">
-                  <Stethoscope className="w-6 h-6" />
+            <div className="flex items-center justify-between gap-2.5 pb-3 sm:pb-4 border-b border-outline-variant/20">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-primary text-on-primary flex items-center justify-center shadow-sm shrink-0">
+                  <Stethoscope className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
-                <div>
-                  <h2 className="text-lg sm:text-xl font-extrabold text-on-surface">
+                <div className="min-w-0">
+                  <h2 className="text-base sm:text-xl font-extrabold text-on-surface leading-tight">
                     {translations.doctorLoginTitle}
                   </h2>
-                  <p className="text-xs text-on-surface-variant">
+                  <p className="text-[11px] sm:text-xs text-on-surface-variant truncate">
                     {translations.doctorLoginSubtitle}
                   </p>
                 </div>
               </div>
-              <span className="text-[11px] font-bold text-primary px-3 py-1 rounded-full bg-primary/10">
-                {language === 'te' ? '1-లాగిన్ మాత్రమే' : '1-Login Only'}
+              <span className="text-[10px] sm:text-[11px] font-bold text-primary px-2.5 py-1 rounded-full bg-primary/10 whitespace-nowrap shrink-0">
+                {language === 'te' ? '1-లాగిన్' : '1-Login Only'}
               </span>
             </div>
 
@@ -210,9 +210,9 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                 </p>
 
                 {/* 1-Tap Quick Doctor Login */}
-                <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 space-y-3">
+                <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-primary/5 border border-primary/20 space-y-2.5 sm:space-y-3">
                   <div className="flex items-center gap-2 text-xs font-bold text-primary">
-                    <UserCheck className="w-4 h-4" />
+                    <UserCheck className="w-4 h-4 shrink-0" />
                     <span>{translations.oneTapDoctorBtn}</span>
                   </div>
 
@@ -221,10 +221,10 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                     whileTap={{ scale: 0.98 }}
                     type="button"
                     onClick={handleOneTapDoctorLogin}
-                    className="w-full min-h-[48px] rounded-xl bg-primary text-on-primary font-bold text-sm shadow hover:bg-primary-container transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full min-h-[48px] px-3 py-2 rounded-xl bg-primary text-on-primary font-bold text-xs sm:text-sm shadow hover:bg-primary-container transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer"
                   >
-                    <span>⚡ {translations.oneTapDoctorBtn}</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <span className="truncate">⚡ {translations.oneTapDoctorBtn}</span>
+                    <ArrowRight className="w-4 h-4 shrink-0" />
                   </motion.button>
 
                   <p className="text-[11px] text-center text-on-surface-variant">
@@ -316,7 +316,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: 0.15 }}
-            className="bg-surface-container-lowest rounded-3xl p-5 sm:p-6 border border-outline-variant/30 shadow-sm space-y-4"
+            className="bg-surface-container-lowest rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-outline-variant/30 shadow-sm space-y-4"
           >
             <div className="flex items-center justify-between pb-3 border-b border-outline-variant/20">
               <h3 className="text-base font-bold text-on-surface">
@@ -371,7 +371,7 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: 0.2 }}
-            className="bg-surface-container-lowest rounded-3xl p-5 sm:p-6 border border-outline-variant/30 shadow-sm space-y-4"
+            className="bg-surface-container-lowest rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-outline-variant/30 shadow-sm space-y-4"
           >
             <h3 className="text-base font-bold text-on-surface">
               {language === 'te' ? 'మీ ఇటీవలి రిజర్వేషన్లు' : 'Your Recent Reservations'}
