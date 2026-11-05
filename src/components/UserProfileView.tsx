@@ -8,6 +8,7 @@ import {
   Mail,
   KeyRound,
   ShieldCheck,
+  Calendar,
   CalendarCheck,
   CheckCircle2,
   Clock,
@@ -174,6 +175,29 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                     <span>{language === 'te' ? `ఈ రోజు షెడ్యూల్: ${appointments.length} రోగులు` : `Scheduled Today: ${appointments.length} Patients`}</span>
                     <span>&middot;</span>
                     <span>{language === 'te' ? 'ఆపరేటరీ: సూట్ 1' : 'Operatory: Suite 1'}</span>
+                  </div>
+                </div>
+
+                {/* Visible Operatory Clinical Slots Peek */}
+                <div className="p-3.5 rounded-2xl bg-surface-container-low border border-outline-variant/30 space-y-2">
+                  <div className="flex items-center justify-between text-xs font-bold text-on-surface">
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-primary" />
+                      <span>{language === 'te' ? 'రాబోయే క్లినికల్ స్లాట్లు & సమయాలు' : 'Clinical Slots & Operating Times'}</span>
+                    </span>
+                    <span className="text-primary font-bold">Wed &amp; Thu</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="p-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant/20">
+                      <p className="text-[10px] font-bold text-on-surface-variant uppercase">Wednesday Session</p>
+                      <p className="font-black text-primary text-xs mt-0.5">3 Patients Booked</p>
+                      <p className="text-[10px] text-on-surface-variant mt-0.5">09:00 AM, 10:45 AM, 11:45 AM</p>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-surface-container-lowest border border-outline-variant/20">
+                      <p className="text-[10px] font-bold text-on-surface-variant uppercase">Thursday Session</p>
+                      <p className="font-black text-primary text-xs mt-0.5">2 Patients Booked</p>
+                      <p className="text-[10px] text-on-surface-variant mt-0.5">01:30 PM, 02:45 PM</p>
+                    </div>
                   </div>
                 </div>
 
@@ -382,32 +406,59 @@ export const UserProfileView: React.FC<UserProfileViewProps> = ({
                 {recentPatientBookings.map((apt) => (
                   <div
                     key={apt.id}
-                    className="p-3.5 rounded-2xl bg-surface-container-low border border-outline-variant/20 text-xs space-y-1.5"
+                    className="p-3.5 rounded-2xl bg-surface-container-low border border-outline-variant/30 text-xs space-y-2"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-on-surface">{apt.treatmentName}</span>
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                      <span className="font-extrabold text-on-surface text-sm">{apt.treatmentName}</span>
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
                         {apt.status}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-on-surface-variant">
-                      <Clock className="w-3.5 h-3.5 text-primary" />
-                      <span>{apt.date} @ {apt.timeSlot}</span>
+
+                    {/* High-Contrast Slot & Time Display */}
+                    <div className="flex items-center gap-2 p-2 rounded-xl bg-primary/10 border border-primary/20">
+                      <Clock className="w-4 h-4 text-primary shrink-0" />
+                      <span className="font-black text-primary text-sm">{apt.timeSlot}</span>
+                      <span className="text-xs font-bold text-on-surface">&middot; {apt.date}</span>
                     </div>
-                    <p className="text-[11px] font-mono text-primary">Pass ID: {apt.id}</p>
+
+                    <p className="text-[11px] font-mono text-primary font-bold">Pass ID: {apt.id}</p>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="p-4 rounded-2xl bg-surface-container-low text-center text-xs text-on-surface-variant space-y-1">
-                <p className="font-medium text-on-surface">
-                  {language === 'te' ? 'ఇంకా రిజర్వేషన్లు బుక్ చేయబడలేదు' : 'No reservations booked yet'}
-                </p>
-                <p>
+              <div className="p-4 rounded-2xl bg-surface-container-low border border-outline-variant/20 text-xs space-y-3">
+                <div className="flex items-center gap-2 text-primary font-bold">
+                  <Calendar className="w-4 h-4" />
+                  <span>{language === 'te' ? 'అందుబాటులో ఉన్న క్లినికల్ స్లాట్లు' : 'Available Clinical Slots'}</span>
+                </div>
+                <p className="text-xs text-on-surface-variant leading-relaxed">
                   {language === 'te'
-                    ? 'మీ తక్షణ డిజిటల్ పాస్ పొందడానికి అపాయింట్‌మెంట్‌ను రిజర్వ్ చేసుకోండి.'
-                    : 'Reserve an appointment to get your instant digital pass.'}
+                    ? 'డాక్టర్ సారా జెంకిన్స్ ప్రతి బుధవారం మరియు గురువారం రోగులను చూస్తారు. రాబోయే స్లాట్లలో ఒకదాన్ని ఎంచుకోండి.'
+                    : 'Dr. Sarah Jenkins is accepting in-person patients every Wednesday & Thursday. Choose your preferred slot below.'}
                 </p>
+                <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                  <span className="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 font-extrabold text-[11px]">
+                    Wed @ 10:00 AM
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-teal-100 text-teal-800 font-extrabold text-[11px]">
+                    Thu @ 01:15 PM
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onGoToBooking) onGoToBooking();
+                    else {
+                      setActiveTab('booking');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
+                  className="w-full mt-2 min-h-[42px] px-3 py-2 rounded-xl bg-primary text-on-primary font-bold text-xs shadow-xs hover:bg-primary-container transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <CalendarCheck className="w-3.5 h-3.5" />
+                  <span>{language === 'te' ? 'స్లాట్ & సమయాన్ని బుక్ చేయండి' : 'Book Clinical Slot & Time'}</span>
+                </button>
               </div>
             )}
           </motion.div>

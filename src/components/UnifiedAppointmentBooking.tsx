@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useClinic } from '../context/ClinicContext';
 import { ClinicAppointment } from '../types/clinic';
@@ -19,16 +19,15 @@ import {
   Sparkles,
   Lock,
   Headphones,
-  FileText,
   Printer,
   CalendarPlus,
   Stethoscope,
   Smile,
-  ShieldAlert,
   ChevronRight,
   ShieldCheck,
   Check,
   PhoneCall,
+  CalendarCheck2,
 } from 'lucide-react';
 
 export interface UnifiedAppointmentBookingProps {
@@ -64,10 +63,23 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
     return availableDates;
   }, [availableDates, dayFilter]);
 
-  // Booking Form State - Initialized to first upcoming Wednesday/Thursday session
-  const [selectedDate, setSelectedDate] = useState<string>(
-    availableDates[0]?.dateStr || 'Wednesday, Nov 11'
+  // Stable ID-based Date Selection to prevent desync when language toggles
+  const [selectedDateId, setSelectedDateId] = useState<string>(
+    availableDates[0]?.id || 'slot-2026-11-11'
   );
+
+  // Synchronize when availableDates changes
+  useEffect(() => {
+    if (!availableDates.some((d) => d.id === selectedDateId) && availableDates.length > 0) {
+      setSelectedDateId(availableDates[0].id);
+    }
+  }, [availableDates, selectedDateId]);
+
+  const activeDateObj = useMemo(() => {
+    return availableDates.find((d) => d.id === selectedDateId) || availableDates[0];
+  }, [availableDates, selectedDateId]);
+
+  const selectedDate = activeDateObj?.dateStr || 'Wednesday, Nov 11';
   const [selectedSlot, setSelectedSlot] = useState<string>('10:00 AM');
   const [fullName, setFullName] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
@@ -174,7 +186,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
             </p>
           </div>
 
-          {/* Digital Ticket Pass */}
+          {/* Digital Ticket Pass with High-Visibility Date & Time */}
           <div className="bg-surface-container-low rounded-2xl p-5 sm:p-6 border border-outline-variant/30 text-left max-w-xl mx-auto space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-outline-variant/30">
               <div>
@@ -186,7 +198,20 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            {/* High-Contrast Slot & Time Highlight */}
+            <div className="p-3.5 rounded-xl bg-primary/10 border-2 border-primary/30 flex items-center gap-3">
+              <Clock className="w-6 h-6 text-primary shrink-0" />
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                  {translations.selectedSlotTimeLabel}
+                </span>
+                <p className="text-base sm:text-lg font-black text-on-surface">
+                  {confirmedAppointment.date} &middot; <span className="text-primary">{confirmedAppointment.timeSlot}</span>
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs pt-1">
               <div>
                 <p className="text-on-surface-variant font-medium">{translations.passProcedure}</p>
                 <p className="font-bold text-on-surface text-sm">{confirmedAppointment.treatmentName}</p>
@@ -196,12 +221,12 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
                 <p className="font-bold text-on-surface text-sm">{confirmedAppointment.doctorName}</p>
               </div>
               <div>
-                <p className="text-on-surface-variant font-medium">{translations.passWhen}</p>
-                <p className="font-bold text-primary text-sm">{confirmedAppointment.date} &middot; {confirmedAppointment.timeSlot}</p>
-              </div>
-              <div>
                 <p className="text-on-surface-variant font-medium">{translations.passLocation}</p>
                 <p className="font-bold text-on-surface text-sm">450 Sutter St, Ste 1800, SF</p>
+              </div>
+              <div>
+                <p className="text-on-surface-variant font-medium">{translations.estimatedCopay}</p>
+                <p className="font-bold text-primary text-sm">{currentTreatment.estimatedCopay}</p>
               </div>
             </div>
 
@@ -269,14 +294,14 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
 
         {/* 4-Step Visual Progress Breadcrumb */}
         <div className="pt-4 flex items-center justify-center gap-2 sm:gap-4 text-xs font-semibold text-on-surface-variant overflow-x-auto py-1">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary whitespace-nowrap">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary whitespace-nowrap font-bold">
             <span className="w-5 h-5 rounded-full bg-primary text-on-primary flex items-center justify-center text-[10px] font-bold">1</span>
             <span>{language === 'te' ? 'సేవ' : 'Service'}</span>
           </span>
           <ChevronRight className="w-3.5 h-3.5 text-outline-variant shrink-0" />
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary whitespace-nowrap">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary whitespace-nowrap font-bold">
             <span className="w-5 h-5 rounded-full bg-primary text-on-primary flex items-center justify-center text-[10px] font-bold">2</span>
-            <span>{language === 'te' ? 'బుధ & గురు' : 'Wed & Thu'}</span>
+            <span>{language === 'te' ? 'బుధ & గురు స్లాట్లు' : 'Wed & Thu Slots'}</span>
           </span>
           <ChevronRight className="w-3.5 h-3.5 text-outline-variant shrink-0" />
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-on-surface whitespace-nowrap">
@@ -348,8 +373,8 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
           </div>
         </div>
 
-        {/* STEP 2: Reconstructed Clinical Date & Time Selection (Wednesday & Thursday Exclusivity) */}
-        <div className="bg-surface-container-lowest rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-outline-variant/30 shadow-sm space-y-6">
+        {/* STEP 2: Highly Visible Clinical Date & Time Selection (Wednesday & Thursday Exclusivity) */}
+        <div className="bg-surface-container-lowest rounded-2xl sm:rounded-3xl p-4 sm:p-8 border-2 border-primary/20 shadow-md space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-outline-variant/20">
             <div className="flex items-center gap-3">
               <span className="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm">
@@ -363,6 +388,38 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
             <span className="text-xs font-semibold text-primary px-3 py-1.5 rounded-full bg-primary/10 self-start sm:self-auto">
               {translations.selectedSessionPrompt}: {selectedDate} @ {selectedSlot}
             </span>
+          </div>
+
+          {/* ULTRA-PROMINENT ACTIVE SLOT & TIME BANNER */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-primary/10 border-2 border-primary/30 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-md">
+                <Clock className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-primary block">
+                  {translations.selectedSlotTimeLabel}
+                </span>
+                <div className="flex flex-wrap items-baseline gap-2 mt-0.5">
+                  <span className="text-base sm:text-xl font-black text-on-surface">
+                    {selectedDate}
+                  </span>
+                  <span className="text-base sm:text-xl font-black text-primary">
+                    &middot; {selectedSlot}
+                  </span>
+                </div>
+                <p className="text-xs text-on-surface-variant mt-0.5">
+                  {activeDateObj?.sessionTitle || 'Comprehensive Dental Care'} &middot; Dr. Sarah Jenkins
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 self-start md:self-center">
+              <span className="px-3.5 py-1.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-1.5 shadow-xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
+                <span>{activeDateObj?.sessionBadge || 'Full Clinic'}</span>
+              </span>
+            </div>
           </div>
 
           {/* Prominent Clinical Schedule Notice: Wednesday & Thursday Operating Policy */}
@@ -450,27 +507,27 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
               </div>
             </div>
 
-            {/* Reconstructed Date Selection Card Grid (Strictly Wednesdays & Thursdays) */}
+            {/* High-Contrast Date Selection Cards Grid (Strictly Wednesdays & Thursdays) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {filteredDates.map((item) => {
-                const isSelected = selectedDate === item.dateStr;
+                const isSelected = item.id === selectedDateId;
                 return (
                   <motion.div
                     key={item.id}
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => setSelectedDate(item.dateStr)}
-                    className={`cursor-pointer rounded-2xl p-4 border transition-all text-left flex flex-col justify-between min-h-[92px] ${
+                    onClick={() => setSelectedDateId(item.id)}
+                    className={`cursor-pointer rounded-2xl p-4 transition-all text-left flex flex-col justify-between min-h-[96px] ${
                       isSelected
-                        ? 'border-primary bg-primary/5 shadow-md ring-2 ring-primary/20'
-                        : 'border-outline-variant/30 bg-surface hover:border-primary/50'
+                        ? 'border-2 border-primary bg-primary/10 shadow-md ring-2 ring-primary/30'
+                        : 'border-2 border-outline-variant/40 bg-surface-container-lowest hover:border-primary/60 hover:bg-surface-container-low shadow-xs'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <div className="flex items-center gap-2">
                           <span
-                            className={`text-xs uppercase font-extrabold px-2 py-0.5 rounded-md ${
+                            className={`text-xs uppercase font-extrabold px-2.5 py-0.5 rounded-md ${
                               item.isWednesday
                                 ? 'bg-emerald-100 text-emerald-800'
                                 : 'bg-teal-100 text-teal-800'
@@ -478,28 +535,28 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
                           >
                             {item.dayName}
                           </span>
-                          <span className="text-xs font-bold text-on-surface">
+                          <span className="text-sm font-extrabold text-on-surface">
                             {item.formattedDate}
                           </span>
                         </div>
-                        <p className="text-xs text-on-surface-variant mt-1.5 font-medium line-clamp-1">
+                        <p className="text-xs text-on-surface font-semibold mt-1.5 line-clamp-1">
                           {item.sessionTitle}
                         </p>
                       </div>
 
-                      <div className="shrink-0">
+                      <div className="shrink-0 mt-0.5">
                         {isSelected ? (
-                          <div className="w-5 h-5 rounded-full bg-primary text-on-primary flex items-center justify-center">
+                          <div className="w-5 h-5 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-xs">
                             <Check className="w-3.5 h-3.5 stroke-[3]" />
                           </div>
                         ) : (
-                          <div className="w-5 h-5 rounded-full border border-outline-variant/60" />
+                          <div className="w-5 h-5 rounded-full border-2 border-outline-variant/60" />
                         )}
                       </div>
                     </div>
 
                     <div className="pt-2 mt-2 border-t border-outline-variant/20 flex items-center justify-between text-xs text-on-surface-variant">
-                      <span className="text-[11px] font-semibold text-primary">
+                      <span className="text-[11px] font-bold text-primary">
                         {item.sessionBadge}
                       </span>
                       <span className="text-[11px] font-bold text-emerald-700">
@@ -512,12 +569,12 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
             </div>
           </div>
 
-          {/* Time Slot Picker by Clinical Period */}
-          <div className="space-y-4 pt-2">
+          {/* Time Slot Picker by Clinical Period with High Contrast Visibility */}
+          <div className="space-y-5 pt-2">
             {/* Morning Sessions */}
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-primary" />
+            <div className="space-y-2">
+              <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5">
+                <Clock className="w-4 h-4 text-primary" />
                 <span>{translations.morningSlots} (09:00 AM – 11:30 AM)</span>
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -529,14 +586,15 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
                       type="button"
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setSelectedSlot(slot)}
-                      className={`min-h-[48px] py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                      className={`min-h-[50px] py-2.5 px-3 rounded-xl border-2 text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-2 ${
                         isSelected
-                          ? 'bg-primary text-on-primary border-primary shadow-sm'
-                          : 'bg-surface border-outline-variant/30 text-on-surface hover:border-primary/50'
+                          ? 'bg-primary text-on-primary border-primary ring-2 ring-primary/40 shadow-md font-black'
+                          : 'bg-surface-container-lowest border-outline-variant/40 text-on-surface hover:border-primary/80 hover:bg-primary/5 shadow-xs'
                       }`}
                     >
-                      {isSelected && <Check className="w-3.5 h-3.5 shrink-0" />}
+                      <Clock className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-on-primary' : 'text-primary'}`} />
                       <span>{slot}</span>
+                      {isSelected && <Check className="w-3.5 h-3.5 stroke-[3] shrink-0 text-on-primary ml-auto sm:ml-0" />}
                     </motion.button>
                   );
                 })}
@@ -544,9 +602,9 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
             </div>
 
             {/* Afternoon Sessions */}
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-secondary" />
+            <div className="space-y-2">
+              <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5">
+                <Clock className="w-4 h-4 text-secondary" />
                 <span>{translations.afternoonSlots} (01:15 PM – 03:30 PM)</span>
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -558,14 +616,15 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
                       type="button"
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setSelectedSlot(slot)}
-                      className={`min-h-[48px] py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                      className={`min-h-[50px] py-2.5 px-3 rounded-xl border-2 text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-2 ${
                         isSelected
-                          ? 'bg-primary text-on-primary border-primary shadow-sm'
-                          : 'bg-surface border-outline-variant/30 text-on-surface hover:border-primary/50'
+                          ? 'bg-primary text-on-primary border-primary ring-2 ring-primary/40 shadow-md font-black'
+                          : 'bg-surface-container-lowest border-outline-variant/40 text-on-surface hover:border-primary/80 hover:bg-primary/5 shadow-xs'
                       }`}
                     >
-                      {isSelected && <Check className="w-3.5 h-3.5 shrink-0" />}
+                      <Clock className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-on-primary' : 'text-secondary'}`} />
                       <span>{slot}</span>
+                      {isSelected && <Check className="w-3.5 h-3.5 stroke-[3] shrink-0 text-on-primary ml-auto sm:ml-0" />}
                     </motion.button>
                   );
                 })}
@@ -573,9 +632,9 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
             </div>
 
             {/* Evening Sessions */}
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-teal-700" />
+            <div className="space-y-2">
+              <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5">
+                <Clock className="w-4 h-4 text-teal-700" />
                 <span>{translations.eveningSlots} (04:15 PM – 05:00 PM)</span>
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -587,14 +646,15 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
                       type="button"
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setSelectedSlot(slot)}
-                      className={`min-h-[48px] py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                      className={`min-h-[50px] py-2.5 px-3 rounded-xl border-2 text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-2 ${
                         isSelected
-                          ? 'bg-primary text-on-primary border-primary shadow-sm'
-                          : 'bg-surface border-outline-variant/30 text-on-surface hover:border-primary/50'
+                          ? 'bg-primary text-on-primary border-primary ring-2 ring-primary/40 shadow-md font-black'
+                          : 'bg-surface-container-lowest border-outline-variant/40 text-on-surface hover:border-primary/80 hover:bg-primary/5 shadow-xs'
                       }`}
                     >
-                      {isSelected && <Check className="w-3.5 h-3.5 shrink-0" />}
+                      <Clock className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-on-primary' : 'text-teal-700'}`} />
                       <span>{slot}</span>
+                      {isSelected && <Check className="w-3.5 h-3.5 stroke-[3] shrink-0 text-on-primary ml-auto sm:ml-0" />}
                     </motion.button>
                   );
                 })}
@@ -734,7 +794,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
         </div>
 
         {/* STEP 4: IN-LINE CONFIRMATION DOCK */}
-        <div className="bg-surface-container-high rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-primary/30 shadow-lg space-y-5 sm:space-y-6">
+        <div className="bg-surface-container-high rounded-2xl sm:rounded-3xl p-4 sm:p-8 border-2 border-primary/30 shadow-lg space-y-5 sm:space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-outline-variant/30">
             <div>
               <span className="text-xs uppercase tracking-wider font-bold text-primary">
@@ -751,7 +811,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
             </div>
           </div>
 
-          {/* Quick Summary Grid */}
+          {/* Quick Summary Grid with High Contrast Slot Time */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-surface-container-lowest p-4 rounded-2xl border border-outline-variant/20 text-xs">
             <div>
               <p className="text-on-surface-variant font-medium">{translations.passProcedure}</p>
@@ -765,10 +825,10 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
               <p className="text-on-surface-variant">Operatory 1 (Panoramic Suite)</p>
             </div>
 
-            <div>
-              <p className="text-on-surface-variant font-medium">{translations.passWhen}</p>
-              <p className="font-bold text-primary text-sm mt-0.5">{selectedDate}</p>
-              <p className="font-bold text-on-surface">{selectedSlot}</p>
+            <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20">
+              <p className="text-primary font-bold uppercase tracking-wider text-[10px]">{translations.selectedSlotTimeLabel}</p>
+              <p className="font-black text-on-surface text-sm mt-0.5">{selectedDate}</p>
+              <p className="font-black text-primary text-sm">{selectedSlot}</p>
             </div>
 
             <div>

@@ -137,6 +137,14 @@ export interface Translations {
   saveNoteBtn: string;
   cancelBtn: string;
   searchPlaceholder: string;
+  scheduleMatrixTitle: string;
+  scheduleMatrixSub: string;
+  openSlotBadge: string;
+  bookedSlotBadge: string;
+  quickBookSlotBtn: string;
+  selectedSlotTimeLabel: string;
+  wednesdaySessionTab: string;
+  thursdaySessionTab: string;
 
   // AI Modal
   aiTitle: string;
@@ -306,6 +314,14 @@ export const translations: Record<Language, Translations> = {
     saveNoteBtn: 'Save',
     cancelBtn: 'Cancel',
     searchPlaceholder: 'Search patient, tooth, or symptom...',
+    scheduleMatrixTitle: 'Clinical Time Slots & Operatory Schedule',
+    scheduleMatrixSub: 'Live interactive view of open and reserved appointment slots for Wednesday and Thursday operating days.',
+    openSlotBadge: 'Available Slot',
+    bookedSlotBadge: 'Reserved',
+    quickBookSlotBtn: 'Book Slot',
+    selectedSlotTimeLabel: 'Selected Slot & Time',
+    wednesdaySessionTab: 'Wednesday Clinical (Operatory 1)',
+    thursdaySessionTab: 'Thursday Surgical (Operatory 1)',
 
     // AI Modal
     aiTitle: 'Lumina Dental AI',
@@ -476,6 +492,14 @@ export const translations: Record<Language, Translations> = {
     saveNoteBtn: 'సేవ్ చేయండి',
     cancelBtn: 'రద్దు',
     searchPlaceholder: 'రోగి పేరు, దంత సంఖ్య లేదా సమస్యను శోధించండి...',
+    scheduleMatrixTitle: 'క్లినికల్ సమయ స్లాట్లు & ఆపరేటరీ షెడ్యూల్',
+    scheduleMatrixSub: 'బుధవారం మరియు గురువారం ఆపరేటింగ్ రోజులలో అందుబాటులో ఉన్న మరియు రిజర్వ్ చేసిన స్లాట్ల ప్రత్యక్ష వీక్షణ.',
+    openSlotBadge: 'అందుబాటులో ఉన్న స్లాట్',
+    bookedSlotBadge: 'రిజర్వ్ చేయబడింది',
+    quickBookSlotBtn: 'స్లాట్ బుక్ చేయండి',
+    selectedSlotTimeLabel: 'ఎంచుకున్న స్లాట్ & సమయం',
+    wednesdaySessionTab: 'బుధవారం క్లినికల్ (ఆపరేటరీ 1)',
+    thursdaySessionTab: 'గురువారం సర్జికల్ (ఆపరేటరీ 1)',
 
     // AI Modal
     aiTitle: 'లూమినా డెంటల్ AI',

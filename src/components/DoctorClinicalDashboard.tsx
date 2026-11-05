@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useClinic } from '../context/ClinicContext';
 import { ClinicAppointment } from '../types/clinic';
+import { CLINIC_TIME_SLOTS } from '../config/scheduleConfig';
 import {
   Stethoscope,
   Clock,
@@ -20,6 +21,9 @@ import {
   ShieldCheck,
   Search,
   Filter,
+  Check,
+  X,
+  CalendarCheck,
 } from 'lucide-react';
 
 export interface DoctorClinicalDashboardProps {
@@ -35,6 +39,8 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
     doctorLogout,
     updateAppointmentStatus,
     updateDoctorNotes,
+    bookAppointment,
+    treatments,
     setActiveTab,
     translations,
     language,
@@ -45,7 +51,15 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [noteDraft, setNoteDraft] = useState<string>('');
 
-  // Filtered appointments
+  // Doctor Clinical Schedule Matrix Day Selector (Wednesday vs Thursday)
+  const [selectedScheduleDay, setSelectedScheduleDay] = useState<'Wednesday' | 'Thursday'>('Wednesday');
+
+  // Quick Walk-In Booking State for Open Slots
+  const [quickBookingSlot, setQuickBookingSlot] = useState<string | null>(null);
+  const [walkInPatientName, setWalkInPatientName] = useState<string>('');
+  const [walkInTreatmentId, setWalkInTreatmentId] = useState<string>('trt-emergency');
+
+  // Filtered appointments for the patient list
   const filteredAppointments = appointments.filter((apt) => {
     const matchesSearch =
       apt.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -77,6 +91,44 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
   const handleSaveNote = (aptId: string) => {
     updateDoctorNotes(aptId, noteDraft);
     setEditingNoteId(null);
+  };
+
+  // All clinical procedure slots for Dr. Sarah Jenkins
+  const allDaySlots: string[] = [
+    ...CLINIC_TIME_SLOTS.morning,
+    '01:15 PM',
+    '01:30 PM',
+    '02:00 PM',
+    '02:45 PM',
+    '03:30 PM',
+    ...CLINIC_TIME_SLOTS.evening,
+  ];
+
+  const handleConfirmWalkInBooking = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!walkInPatientName.trim() || !quickBookingSlot) return;
+
+    const dateStr =
+      selectedScheduleDay === 'Wednesday' ? 'Wednesday, Nov 11' : 'Thursday, Nov 12';
+
+    bookAppointment({
+      patientName: walkInPatientName.trim(),
+      patientPhone: '(555) 888-0199',
+      patientEmail: 'walkin@lumina.com',
+      treatmentId: walkInTreatmentId,
+      date: dateStr,
+      timeSlot: quickBookingSlot,
+      chiefComplaint: `Direct in-operatory walk-in booking by Dr. Sarah Jenkins for ${quickBookingSlot}.`,
+      medicalAlerts: [],
+      preferences: {
+        boseHeadphones: true,
+        gentleNumbing: true,
+        quietOperatory: true,
+      },
+    });
+
+    setQuickBookingSlot(null);
+    setWalkInPatientName('');
   };
 
   return (
@@ -231,7 +283,209 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
         </motion.div>
       </div>
 
-      {/* 3. Search and Status Filter Bar */}
+      {/* 3. DOCTOR'S CLINICAL TIME SLOTS & OPERATORY SCHEDULE MATRIX (HIGH VISIBILITY) */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35 }}
+        className="bg-surface-container-lowest rounded-2xl sm:rounded-3xl p-4 sm:p-7 border-2 border-primary/20 shadow-md space-y-5"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-outline-variant/20">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-sm">
+              <CalendarCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base sm:text-lg font-extrabold text-on-surface">
+                {translations.scheduleMatrixTitle}
+              </h2>
+              <p className="text-xs text-on-surface-variant">
+                {translations.scheduleMatrixSub}
+              </p>
+            </div>
+          </div>
+
+          {/* Session Day Tabs: Wednesday vs Thursday */}
+          <div className="flex items-center gap-1.5 bg-surface-container-low p-1 rounded-2xl border border-outline-variant/30 text-xs self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => setSelectedScheduleDay('Wednesday')}
+              className={`px-3.5 py-2 rounded-xl font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                selectedScheduleDay === 'Wednesday'
+                  ? 'bg-primary text-on-primary shadow-sm'
+                  : 'text-on-surface-variant hover:text-on-surface'
+              }`}
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              <span>{translations.wednesdaySessionTab}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSelectedScheduleDay('Thursday')}
+              className={`px-3.5 py-2 rounded-xl font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                selectedScheduleDay === 'Thursday'
+                  ? 'bg-primary text-on-primary shadow-sm'
+                  : 'text-on-surface-variant hover:text-on-surface'
+              }`}
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              <span>{translations.thursdaySessionTab}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* TIME SLOTS GRID - HIGH CONTRAST & FULL VISIBILITY */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          {allDaySlots.map((slot) => {
+            // Find if there is an appointment scheduled for this day & slot
+            const bookedApt = appointments.find(
+              (a) =>
+                a.timeSlot === slot &&
+                a.date.toLowerCase().includes(selectedScheduleDay.toLowerCase())
+            );
+
+            const isBooked = Boolean(bookedApt);
+
+            return (
+              <div
+                key={slot}
+                className={`p-3.5 rounded-2xl border-2 transition-all flex flex-col justify-between min-h-[110px] ${
+                  isBooked
+                    ? bookedApt?.status === 'In Chair'
+                      ? 'border-emerald-500 bg-emerald-50/60 shadow-sm ring-1 ring-emerald-500/20'
+                      : 'border-primary/40 bg-surface-container-low shadow-sm'
+                    : 'border-outline-variant/40 bg-surface-container-lowest hover:border-primary/60'
+                }`}
+              >
+                <div className="flex items-center justify-between pb-2 border-b border-outline-variant/20">
+                  <div className="flex items-center gap-1.5">
+                    <Clock className={`w-4 h-4 ${isBooked ? 'text-primary' : 'text-emerald-700'}`} />
+                    <span className="text-sm font-black text-on-surface">{slot}</span>
+                  </div>
+
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
+                      isBooked
+                        ? bookedApt?.status === 'In Chair'
+                          ? 'bg-emerald-200/80 text-emerald-900'
+                          : 'bg-primary/10 text-primary'
+                        : 'bg-emerald-100 text-emerald-800'
+                    }`}
+                  >
+                    {isBooked ? bookedApt?.status || translations.bookedSlotBadge : translations.openSlotBadge}
+                  </span>
+                </div>
+
+                {isBooked && bookedApt ? (
+                  <div className="pt-2 space-y-1">
+                    <p className="text-xs font-black text-on-surface truncate">
+                      {bookedApt.patientName}
+                    </p>
+                    <p className="text-[11px] text-on-surface-variant truncate font-medium">
+                      {bookedApt.treatmentName}
+                    </p>
+                    <div className="pt-1 flex items-center justify-between text-[10px]">
+                      <span className="font-mono text-primary font-bold">{bookedApt.id}</span>
+                      {bookedApt.status !== 'Completed' && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            updateAppointmentStatus(
+                              bookedApt.id,
+                              bookedApt.status === 'In Chair' ? 'Completed' : 'In Chair'
+                            )
+                          }
+                          className="font-bold text-emerald-800 hover:underline cursor-pointer"
+                        >
+                          {bookedApt.status === 'In Chair' ? 'Finish' : 'Seat'}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="pt-2 flex items-center justify-between">
+                    <span className="text-xs text-emerald-800 font-semibold">
+                      {language === 'te' ? 'ఆపరేటరీ ఖాళీగా ఉంది' : 'Operatory Open'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setQuickBookingSlot(slot)}
+                      className="px-2.5 py-1 rounded-lg bg-primary text-on-primary text-[11px] font-bold shadow-xs hover:bg-primary-container transition-all cursor-pointer flex items-center gap-1"
+                    >
+                      <PlusCircle className="w-3 h-3" />
+                      <span>{translations.quickBookSlotBtn}</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* QUICK WALK-IN BOOKING MODAL FOR THE DOCTOR */}
+        <AnimatePresence>
+          {quickBookingSlot && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.97 }}
+              className="p-4 sm:p-5 rounded-2xl bg-surface-container-high border-2 border-primary/30 space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <PlusCircle className="w-4 h-4 text-primary" />
+                  <h4 className="text-xs sm:text-sm font-extrabold text-on-surface">
+                    {language === 'te'
+                      ? `${selectedScheduleDay} @ ${quickBookingSlot} వద్ద రోగిని బుక్ చేయండి`
+                      : `Book Walk-In Patient for ${selectedScheduleDay} @ ${quickBookingSlot}`}
+                  </h4>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setQuickBookingSlot(null)}
+                  className="w-7 h-7 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface hover:bg-surface cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <form onSubmit={handleConfirmWalkInBooking} className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <input
+                  type="text"
+                  required
+                  placeholder={language === 'te' ? 'రోగి పూర్తి పేరు' : 'Patient Full Name'}
+                  value={walkInPatientName}
+                  onChange={(e) => setWalkInPatientName(e.target.value)}
+                  className="px-3.5 py-2 rounded-xl border border-outline-variant/40 bg-surface-container-lowest text-xs text-on-surface font-semibold focus:outline-none focus:border-primary"
+                />
+
+                <select
+                  value={walkInTreatmentId}
+                  onChange={(e) => setWalkInTreatmentId(e.target.value)}
+                  className="px-3.5 py-2 rounded-xl border border-outline-variant/40 bg-surface-container-lowest text-xs text-on-surface font-semibold focus:outline-none focus:border-primary"
+                >
+                  {treatments.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name} ({t.duration})
+                    </option>
+                  ))}
+                </select>
+
+                <button
+                  type="submit"
+                  className="min-h-[40px] px-4 py-2 rounded-xl bg-primary text-on-primary font-bold text-xs shadow hover:bg-primary-container transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Check className="w-4 h-4" />
+                  <span>{language === 'te' ? 'స్లాట్ ఖరారు చేయండి' : 'Confirm Slot Booking'}</span>
+                </button>
+              </form>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+
+      {/* 4. Search and Status Filter Bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-surface-container-lowest p-4 rounded-2xl border border-outline-variant/30">
         <div className="relative w-full sm:w-80">
           <Search className="w-4 h-4 text-on-surface-variant absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -288,7 +542,7 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
         </div>
       </div>
 
-      {/* 4. Patient Treatment Queue Cards (WHO, WHEN, WHAT IS THE PROBLEM) */}
+      {/* 5. Patient Treatment Queue Cards (WHO, WHEN, WHAT IS THE PROBLEM) */}
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
           <h2 className="text-lg sm:text-xl font-bold text-on-surface">
@@ -328,18 +582,19 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                     : 'border-outline-variant/30'
                 }`}
               >
-                {/* Top Row: TIME & WHO & STATUS */}
+                {/* Top Row: TIME & WHO & STATUS with HIGH-CONTRAST TIME SLOT */}
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-outline-variant/20">
                   <div className="flex items-start gap-4">
-                    {/* Time Slot Pill */}
-                    <div className="p-2.5 sm:p-3 rounded-2xl bg-surface-container-low border border-outline-variant/30 text-center min-w-[85px] sm:min-w-[90px] shrink-0">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant block">
-                        Time Slot
-                      </span>
-                      <span className="text-sm sm:text-base font-extrabold text-primary block mt-0.5">
+                    {/* Ultra-Prominent Time Slot Pill */}
+                    <div className="p-3 sm:p-3.5 rounded-2xl bg-primary/10 border-2 border-primary/30 text-center min-w-[95px] sm:min-w-[110px] shrink-0 shadow-xs">
+                      <div className="flex items-center justify-center gap-1 text-primary text-[10px] font-bold uppercase tracking-wider">
+                        <Clock className="w-3 h-3" />
+                        <span>Slot Time</span>
+                      </div>
+                      <span className="text-base sm:text-xl font-black text-primary block mt-0.5 leading-none">
                         {apt.timeSlot}
                       </span>
-                      <span className="text-[10px] font-medium text-on-surface-variant block">
+                      <span className="text-[11px] font-bold text-on-surface block mt-1">
                         {apt.date}
                       </span>
                     </div>
@@ -373,7 +628,7 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                         <span>&middot;</span>
                         <span>{apt.insuranceCarrier || 'PPO In-Network'}</span>
                         <span>&middot;</span>
-                        <span className="font-mono text-[11px]">{apt.id}</span>
+                        <span className="font-mono text-[11px] font-bold text-primary">{apt.id}</span>
                       </div>
                     </div>
                   </div>
@@ -450,101 +705,75 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
                             {language === 'te' ? 'నొప్పి స్కోర్: ' : 'Pain Score: '}
                           </span>
                           <span
-                            className={`font-bold px-2 py-0.5 rounded-full text-xs ${
-                              apt.painScale >= 6
-                                ? 'bg-error/10 text-error'
-                                : 'bg-amber-100 text-amber-800'
+                            className={`px-2 py-0.5 rounded font-bold ${
+                              apt.painScale >= 7
+                                ? 'bg-error/15 text-error font-extrabold'
+                                : 'bg-surface-container-high text-on-surface'
                             }`}
                           >
-                            {apt.painScale} / 10
+                            {apt.painScale}/10
                           </span>
                         </div>
                       )}
-                    </div>
 
-                    {/* Medical Alerts & Comfort Notes */}
-                    <div className="flex flex-wrap items-center gap-2 pt-1">
-                      {apt.medicalAlerts &&
-                        apt.medicalAlerts.map((alert, idxAlert) => (
-                          <span
-                            key={idxAlert}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-error/10 text-error text-[11px] font-bold"
-                          >
-                            <AlertTriangle className="w-3 h-3" />
-                            <span>{alert}</span>
-                          </span>
-                        ))}
-
-                      {apt.preferences?.boseHeadphones && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface text-[11px] font-medium">
-                          <Headphones className="w-3 h-3 text-secondary" />
-                          <span>{translations.prefHeadphones}</span>
-                        </span>
-                      )}
-
-                      {apt.preferences?.nitrousOxide && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface text-[11px] font-medium">
-                          <Sparkles className="w-3 h-3 text-primary" />
-                          <span>{translations.prefNitrous}</span>
-                        </span>
+                      {apt.medicalAlerts && apt.medicalAlerts.length > 0 && (
+                        <div className="flex items-center gap-1 text-error font-semibold">
+                          <AlertTriangle className="w-3.5 h-3.5" />
+                          <span>{apt.medicalAlerts.join(', ')}</span>
+                        </div>
                       )}
                     </div>
                   </div>
 
-                  {/* Right (4 cols): Doctor's Clinical Note Pad */}
-                  <div className="md:col-span-4 bg-surface-container-low p-4 rounded-2xl border border-outline-variant/30 flex flex-col justify-between space-y-3">
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
-                          {translations.clinicalNotesTitle}
-                        </span>
-                        {!isEditingNote && (
-                          <button
-                            onClick={() => handleStartEditNote(apt)}
-                            className="min-h-[44px] text-primary hover:underline text-xs font-semibold flex items-center gap-1 cursor-pointer"
-                          >
-                            <FileEdit className="w-3 h-3" />
-                            <span>{apt.doctorNotes ? (language === 'te' ? 'సవరించు' : 'Edit') : translations.addNoteBtn}</span>
-                          </button>
-                        )}
-                      </div>
-
-                      {isEditingNote ? (
-                        <div className="space-y-2">
-                          <textarea
-                            rows={3}
-                            value={noteDraft}
-                            onChange={(e) => setNoteDraft(e.target.value)}
-                            placeholder={language === 'te' ? 'క్లినికల్ రోగ నిర్ధారణ, అనస్థీషియా మోతాదును టైప్ చేయండి...' : 'Type clinical diagnosis, anesthetic dosage, or restorative plan...'}
-                            className="w-full p-2 text-base sm:text-xs rounded-xl border border-primary bg-surface text-on-surface focus:outline-none"
-                          />
-                          <div className="flex justify-end gap-2">
-                            <button
-                              onClick={() => setEditingNoteId(null)}
-                              className="min-h-[44px] px-3 py-1 rounded-lg text-xs font-medium text-on-surface-variant hover:bg-surface-container"
-                            >
-                              {language === 'te' ? 'రద్దు' : 'Cancel'}
-                            </button>
-                            <button
-                              onClick={() => handleSaveNote(apt.id)}
-                              className="min-h-[44px] px-3.5 py-1 rounded-lg bg-primary text-on-primary text-xs font-bold flex items-center gap-1"
-                            >
-                              <Save className="w-3 h-3" />
-                              <span>{language === 'te' ? 'భద్రపరచు' : 'Save'}</span>
-                            </button>
-                          </div>
-                        </div>
+                  {/* Right (4 cols): Operatory & Clinical Charting Notes */}
+                  <div className="md:col-span-4 bg-surface-container-low p-4 rounded-2xl border border-outline-variant/20 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-on-surface">
+                        {translations.clinicalNotesTitle}
+                      </span>
+                      {!isEditingNote ? (
+                        <button
+                          type="button"
+                          onClick={() => handleStartEditNote(apt)}
+                          className="min-h-[44px] text-xs font-semibold text-primary hover:underline flex items-center gap-1 cursor-pointer"
+                        >
+                          <FileEdit className="w-3 h-3" />
+                          <span>{apt.doctorNotes ? translations.editNoteBtn : translations.addNoteBtn}</span>
+                        </button>
                       ) : (
-                        <p className="text-xs text-on-surface leading-relaxed italic">
-                          {apt.doctorNotes || (language === 'te' ? 'ఇంకా క్లినికల్ నోట్ జోడించబడలేదు. నమోదు చేయడానికి "నోట్ జోడించండి" క్లిక్ చేయండి.' : 'No clinician note added yet. Click "Add Note" to chart.')}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleSaveNote(apt.id)}
+                            className="text-xs font-bold text-primary hover:underline flex items-center gap-1 cursor-pointer"
+                          >
+                            <Save className="w-3 h-3" />
+                            <span>{translations.saveNoteBtn}</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setEditingNoteId(null)}
+                            className="text-xs text-on-surface-variant hover:underline cursor-pointer"
+                          >
+                            {translations.cancelBtn}
+                          </button>
+                        </div>
                       )}
                     </div>
 
-                    <div className="pt-2 border-t border-outline-variant/20 flex items-center justify-between text-[11px] text-on-surface-variant">
-                      <span>Operatory: Suite 1</span>
-                      <span className="font-semibold text-primary">Dr. Sarah Jenkins</span>
-                    </div>
+                    {isEditingNote ? (
+                      <textarea
+                        rows={3}
+                        value={noteDraft}
+                        onChange={(e) => setNoteDraft(e.target.value)}
+                        placeholder="Add clinical observation, excavation findings, or post-op instructions..."
+                        className="w-full p-2.5 rounded-xl border border-outline-variant/40 bg-surface text-on-surface text-xs focus:outline-none focus:border-primary"
+                      />
+                    ) : (
+                      <p className="text-xs text-on-surface-variant italic leading-relaxed">
+                        {apt.doctorNotes || 'No operative notes charted yet. Click Edit to add diagnosis.'}
+                      </p>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -557,4 +786,3 @@ export const DoctorClinicalDashboard: React.FC<DoctorClinicalDashboardProps> = (
 };
 
 export default DoctorClinicalDashboard;
-
