@@ -59,6 +59,15 @@ export interface Translations {
   bookingPill: string;
   bookingTitle: string;
   bookingSubtitle: string;
+  scheduleNoticePill: string;
+  scheduleNoticeTitle: string;
+  scheduleNoticeDesc: string;
+  scheduleEmergencyCall: string;
+  allSessionsFilter: string;
+  wednesdaysOnlyFilter: string;
+  thursdaysOnlyFilter: string;
+  slotsOpenBadge: string;
+  selectedSessionPrompt: string;
   step1Title: string;
   step1Sub: string;
   step2Title: string;
@@ -216,11 +225,21 @@ export const translations: Record<Language, Translations> = {
     bookingTitle: 'Reserve Your Dental Visit',
     bookingSubtitle:
       'Follow the simple steps below. Your appointment confirms immediately with zero cancellation fees up to 24h prior.',
+    scheduleNoticePill: 'Clinical Operating Days: Wednesdays & Thursdays',
+    scheduleNoticeTitle: 'Dr. Sarah Jenkins In-Person Clinical Sessions',
+    scheduleNoticeDesc:
+      'In-person clinical procedures, surgeries, and comprehensive examinations are conducted exclusively on Wednesdays and Thursdays. 24/7 on-call triage remains active for acute dental emergencies.',
+    scheduleEmergencyCall: 'Call 24/7 Urgent Line: (555) 234-8901',
+    allSessionsFilter: 'All Available Sessions',
+    wednesdaysOnlyFilter: 'Wednesdays Only',
+    thursdaysOnlyFilter: 'Thursdays Only',
+    slotsOpenBadge: 'slots open',
+    selectedSessionPrompt: 'Selected Clinical Session',
     step1Title: 'Choose Treatment or Concern',
     step1Sub: 'Select the primary service needed for your visit',
-    step2Title: 'Select Date & Time',
+    step2Title: 'Select Date & Time (Wed & Thu Only)',
     step2Sub: 'With Dr. Sarah Jenkins, DDS (Panoramic Suite 1)',
-    availableDates: 'Available Dates',
+    availableDates: 'Upcoming Clinical Dates (Wednesdays & Thursdays)',
     morningSlots: 'Morning Sessions',
     afternoonSlots: 'Afternoon Sessions',
     eveningSlots: 'Evening Sessions',
@@ -376,11 +395,21 @@ export const translations: Record<Language, Translations> = {
     bookingTitle: 'మీ దంత సందర్శనను రిజర్వ్ చేయండి',
     bookingSubtitle:
       'క్రింది సులభమైన దశలను పూర్తి చేయండి. 24 గంటల ముందు వరకు ఎటువంటి రుసుము లేకుండా ఉచిత రద్దు.',
+    scheduleNoticePill: 'క్లినికల్ రోజులు: బుధవారం మరియు గురువారం మాత్రమే',
+    scheduleNoticeTitle: 'డా. సారా జెంకిన్స్ క్లినికల్ సెషన్ల వివరాలు',
+    scheduleNoticeDesc:
+      'వ్యక్తిగత దంత పరీక్షలు, పునరుద్ధరణ చికిత్సలు మరియు శస్త్రచికిత్సలు ప్రత్యేకంగా బుధవారం మరియు గురువారం మాత్రమే నిర్వహించబడతాయి. అత్యవసర పరిస్థితులకు 24/7 ఆన్-కాల్ మద్దతు అందుబాటులో ఉంటుంది.',
+    scheduleEmergencyCall: '24/7 అత్యవసర లైన్‌కి కాల్ చేయండి: (555) 234-8901',
+    allSessionsFilter: 'అన్ని అందుబాటులో ఉన్న సెషన్లు',
+    wednesdaysOnlyFilter: 'బుధవారాలు మాత్రమే',
+    thursdaysOnlyFilter: 'గురువారాలు మాత్రమే',
+    slotsOpenBadge: 'స్లాట్లు అందుబాటులో ఉన్నాయి',
+    selectedSessionPrompt: 'ఎంచుకున్న క్లినికల్ సెషన్',
     step1Title: 'చికిత్స లేదా సమస్యను ఎంచుకోండి',
     step1Sub: 'మీ సందర్శనకు అవసరమైన ప్రాథమిక సేవను ఎంచుకోండి',
-    step2Title: 'తేదీ మరియు సమయం ఎంచుకోండి',
+    step2Title: 'తేదీ మరియు సమయం ఎంచుకోండి (బుధ & గురువారాలు మాత్రమే)',
     step2Sub: 'డా. సారా జెంకిన్స్, DDS తో (పనోరమిక్ సూట్ 1)',
-    availableDates: 'అందుబాటులో ఉన్న తేదీలు',
+    availableDates: 'రాబోయే క్లినికల్ తేదీలు (బుధవారాలు & గురువారాలు)',
     morningSlots: 'ఉదయం సెషన్లు',
     afternoonSlots: 'మధ్యాహ్నం సెషన్లు',
     eveningSlots: 'సాయంత్రం సెషన్లు',

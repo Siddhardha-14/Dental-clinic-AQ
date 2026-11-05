@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useClinic } from '../context/ClinicContext';
 import { ClinicAppointment } from '../types/clinic';
+import {
+  ALLOWED_CLINIC_DAYS,
+  CLINIC_TIME_SLOTS,
+  getUpcomingClinicDates,
+  AvailableSessionDate,
+} from '../config/scheduleConfig';
 import {
   Calendar,
   Clock,
@@ -14,31 +20,21 @@ import {
   Lock,
   Headphones,
   FileText,
-  ArrowRight,
   Printer,
   CalendarPlus,
   Stethoscope,
   Smile,
+  ShieldAlert,
+  ChevronRight,
+  ShieldCheck,
+  Check,
+  PhoneCall,
 } from 'lucide-react';
 
 export interface UnifiedAppointmentBookingProps {
   readonly onBookingComplete?: (appointment: ClinicAppointment) => void;
   readonly onGoToDoctorPortal?: () => void;
 }
-
-const getAvailableDates = (lang: string) => [
-  { id: 'today', label: lang === 'te' ? 'ఈ రోజు' : 'Today', dateStr: lang === 'te' ? 'ఈ రోజు, అక్టోబర్ 24' : 'Today, Oct 24', sub: lang === 'te' ? 'అత్యవసరం/త్వరితం' : 'Urgent/Fast' },
-  { id: 'tomorrow', label: lang === 'te' ? 'రేపు' : 'Tomorrow', dateStr: lang === 'te' ? 'రేపు, అక్టోబర్ 25' : 'Tomorrow, Oct 25', sub: lang === 'te' ? 'అందుబాటులో ఉంది' : 'Available' },
-  { id: 'sat', label: lang === 'te' ? 'శనివారం' : 'Saturday', dateStr: lang === 'te' ? 'శని, అక్టోబర్ 26' : 'Sat, Oct 26', sub: lang === 'te' ? 'ఉదయం స్లాట్లు' : 'Morning slots' },
-  { id: 'mon', label: lang === 'te' ? 'సోమవారం' : 'Monday', dateStr: lang === 'te' ? 'సోమ, అక్టోబర్ 28' : 'Mon, Oct 28', sub: lang === 'te' ? 'పూర్తి రోజు' : 'Full day' },
-  { id: 'tue', label: lang === 'te' ? 'మంగళవారం' : 'Tuesday', dateStr: lang === 'te' ? 'మంగళ, అక్టోబర్ 29' : 'Tue, Oct 29', sub: lang === 'te' ? 'అందుబాటులో ఉంది' : 'Available' },
-];
-
-const TIME_SLOTS = {
-  morning: ['09:00 AM', '10:00 AM', '10:45 AM', '11:30 AM'],
-  afternoon: ['01:15 PM', '02:00 PM', '02:45 PM', '03:30 PM'],
-  evening: ['04:15 PM', '05:00 PM'],
-};
 
 export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps> = ({
   onBookingComplete,
@@ -54,9 +50,25 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
     language,
   } = useClinic();
 
-  // Booking Form State
-  const [selectedDate, setSelectedDate] = useState<string>('Today, Oct 24');
-  const [selectedSlot, setSelectedSlot] = useState<string>('11:30 AM');
+  // Dynamic Wednesday & Thursday session dates
+  const availableDates: AvailableSessionDate[] = useMemo(() => {
+    return getUpcomingClinicDates(6, language);
+  }, [language]);
+
+  // Day Filter: All Sessions, Wednesdays Only, or Thursdays Only
+  const [dayFilter, setDayFilter] = useState<'all' | 'wed' | 'thu'>('all');
+
+  const filteredDates = useMemo(() => {
+    if (dayFilter === 'wed') return availableDates.filter((d) => d.isWednesday);
+    if (dayFilter === 'thu') return availableDates.filter((d) => d.isThursday);
+    return availableDates;
+  }, [availableDates, dayFilter]);
+
+  // Booking Form State - Initialized to first upcoming Wednesday/Thursday session
+  const [selectedDate, setSelectedDate] = useState<string>(
+    availableDates[0]?.dateStr || 'Wednesday, Nov 11'
+  );
+  const [selectedSlot, setSelectedSlot] = useState<string>('10:00 AM');
   const [fullName, setFullName] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [emailAddress, setEmailAddress] = useState<string>('');
@@ -134,7 +146,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
   // If already confirmed, render the high-contrast Confirmation Pass
   if (confirmedAppointment) {
     return (
-      <div id="booking-section" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 scroll-mt-24">
+      <div id="booking-section" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 scroll-mt-24">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -254,6 +266,29 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
         <p className="text-xs sm:text-sm text-on-surface-variant">
           {translations.bookingSubtitle}
         </p>
+
+        {/* 4-Step Visual Progress Breadcrumb */}
+        <div className="pt-4 flex items-center justify-center gap-2 sm:gap-4 text-xs font-semibold text-on-surface-variant overflow-x-auto py-1">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary whitespace-nowrap">
+            <span className="w-5 h-5 rounded-full bg-primary text-on-primary flex items-center justify-center text-[10px] font-bold">1</span>
+            <span>{language === 'te' ? 'సేవ' : 'Service'}</span>
+          </span>
+          <ChevronRight className="w-3.5 h-3.5 text-outline-variant shrink-0" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary whitespace-nowrap">
+            <span className="w-5 h-5 rounded-full bg-primary text-on-primary flex items-center justify-center text-[10px] font-bold">2</span>
+            <span>{language === 'te' ? 'బుధ & గురు' : 'Wed & Thu'}</span>
+          </span>
+          <ChevronRight className="w-3.5 h-3.5 text-outline-variant shrink-0" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-on-surface whitespace-nowrap">
+            <span className="w-5 h-5 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center text-[10px] font-bold">3</span>
+            <span>{language === 'te' ? 'వివరాలు' : 'Details'}</span>
+          </span>
+          <ChevronRight className="w-3.5 h-3.5 text-outline-variant shrink-0" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-on-surface whitespace-nowrap">
+            <span className="w-5 h-5 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center text-[10px] font-bold">4</span>
+            <span>{language === 'te' ? 'నిర్ధారణ' : 'Confirm'}</span>
+          </span>
+        </div>
       </div>
 
       <form onSubmit={handleConfirmReservation} className="space-y-8 sm:space-y-10">
@@ -313,9 +348,9 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
           </div>
         </div>
 
-        {/* STEP 2: Choose Date & Time Slot */}
-        <div className="bg-surface-container-lowest rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-outline-variant/30 shadow-sm space-y-5 sm:space-y-6">
-          <div className="flex items-center justify-between pb-3 border-b border-outline-variant/20">
+        {/* STEP 2: Reconstructed Clinical Date & Time Selection (Wednesday & Thursday Exclusivity) */}
+        <div className="bg-surface-container-lowest rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-outline-variant/30 shadow-sm space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-outline-variant/20">
             <div className="flex items-center gap-3">
               <span className="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm">
                 2
@@ -325,51 +360,168 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
                 <p className="text-xs text-on-surface-variant">{translations.step2Sub}</p>
               </div>
             </div>
-            <span className="text-xs font-semibold text-primary px-3 py-1 rounded-full bg-primary/10 hidden sm:inline-block">
-              {language === 'te' ? 'ఎంపికైంది:' : 'Selected:'} {selectedDate} @ {selectedSlot}
+            <span className="text-xs font-semibold text-primary px-3 py-1.5 rounded-full bg-primary/10 self-start sm:self-auto">
+              {translations.selectedSessionPrompt}: {selectedDate} @ {selectedSlot}
             </span>
           </div>
 
-          {/* Date Selector Pills */}
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-              {translations.availableDates}
-            </label>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-              {getAvailableDates(language).map((d) => {
-                const isSelected = selectedDate === d.dateStr;
+          {/* Prominent Clinical Schedule Notice: Wednesday & Thursday Operating Policy */}
+          <div className="rounded-2xl p-4 sm:p-5 bg-emerald-50/70 border border-emerald-200/70 text-on-surface space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-xl bg-emerald-700 text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <Calendar className="w-4 h-4" />
+                </div>
+                <h4 className="text-sm font-bold text-emerald-950">
+                  {translations.scheduleNoticeTitle}
+                </h4>
+              </div>
+              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-200/70 text-emerald-900">
+                {translations.scheduleNoticePill}
+              </span>
+            </div>
+
+            <p className="text-xs text-emerald-900/90 leading-relaxed">
+              {translations.scheduleNoticeDesc}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-3 pt-1 text-xs">
+              <div className="inline-flex items-center gap-1.5 font-bold text-emerald-950">
+                <Check className="w-3.5 h-3.5 text-emerald-700" />
+                <span>{language === 'te' ? 'బుధవారం: పూర్తి క్లినికల్ & సంప్రదింపులు' : 'Wednesday: Full Clinical & Consults'}</span>
+              </div>
+              <div className="inline-flex items-center gap-1.5 font-bold text-emerald-950">
+                <Check className="w-3.5 h-3.5 text-emerald-700" />
+                <span>{language === 'te' ? 'గురువారం: శస్త్రచికిత్స & సమగ్ర సంరక్షణ' : 'Thursday: Surgical & Comprehensive Care'}</span>
+              </div>
+              <a
+                href="tel:5552348901"
+                className="ml-auto inline-flex items-center gap-1.5 text-emerald-800 hover:text-emerald-950 font-semibold underline text-xs"
+              >
+                <PhoneCall className="w-3.5 h-3.5" />
+                <span>{translations.scheduleEmergencyCall}</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Session Day Filter Tabs */}
+          <div className="space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-primary" />
+                <span>{translations.availableDates}</span>
+              </label>
+
+              {/* Day filter pills */}
+              <div className="flex items-center gap-1.5 self-start sm:self-auto bg-surface-container-low p-1 rounded-xl border border-outline-variant/20 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setDayFilter('all')}
+                  className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                    dayFilter === 'all'
+                      ? 'bg-primary text-on-primary shadow-sm'
+                      : 'text-on-surface-variant hover:text-on-surface'
+                  }`}
+                >
+                  {translations.allSessionsFilter}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDayFilter('wed')}
+                  className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                    dayFilter === 'wed'
+                      ? 'bg-primary text-on-primary shadow-sm'
+                      : 'text-on-surface-variant hover:text-on-surface'
+                  }`}
+                >
+                  {translations.wednesdaysOnlyFilter}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDayFilter('thu')}
+                  className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                    dayFilter === 'thu'
+                      ? 'bg-primary text-on-primary shadow-sm'
+                      : 'text-on-surface-variant hover:text-on-surface'
+                  }`}
+                >
+                  {translations.thursdaysOnlyFilter}
+                </button>
+              </div>
+            </div>
+
+            {/* Reconstructed Date Selection Card Grid (Strictly Wednesdays & Thursdays) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {filteredDates.map((item) => {
+                const isSelected = selectedDate === item.dateStr;
                 return (
-                  <motion.button
-                    key={d.id}
-                    type="button"
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => setSelectedDate(d.dateStr)}
-                    className={`min-h-[50px] p-2.5 rounded-2xl border text-center transition-all cursor-pointer ${
+                  <motion.div
+                    key={item.id}
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setSelectedDate(item.dateStr)}
+                    className={`cursor-pointer rounded-2xl p-4 border transition-all text-left flex flex-col justify-between min-h-[92px] ${
                       isSelected
-                        ? 'bg-primary text-on-primary border-primary shadow-sm font-bold'
-                        : 'bg-surface border-outline-variant/30 text-on-surface hover:border-primary/50'
+                        ? 'border-primary bg-primary/5 shadow-md ring-2 ring-primary/20'
+                        : 'border-outline-variant/30 bg-surface hover:border-primary/50'
                     }`}
                   >
-                    <div className="text-xs font-bold">{d.label}</div>
-                    <div className={`text-xs mt-0.5 ${isSelected ? 'text-on-primary/80' : 'text-on-surface-variant'}`}>
-                      {d.sub}
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`text-xs uppercase font-extrabold px-2 py-0.5 rounded-md ${
+                              item.isWednesday
+                                ? 'bg-emerald-100 text-emerald-800'
+                                : 'bg-teal-100 text-teal-800'
+                            }`}
+                          >
+                            {item.dayName}
+                          </span>
+                          <span className="text-xs font-bold text-on-surface">
+                            {item.formattedDate}
+                          </span>
+                        </div>
+                        <p className="text-xs text-on-surface-variant mt-1.5 font-medium line-clamp-1">
+                          {item.sessionTitle}
+                        </p>
+                      </div>
+
+                      <div className="shrink-0">
+                        {isSelected ? (
+                          <div className="w-5 h-5 rounded-full bg-primary text-on-primary flex items-center justify-center">
+                            <Check className="w-3.5 h-3.5 stroke-[3]" />
+                          </div>
+                        ) : (
+                          <div className="w-5 h-5 rounded-full border border-outline-variant/60" />
+                        )}
+                      </div>
                     </div>
-                  </motion.button>
+
+                    <div className="pt-2 mt-2 border-t border-outline-variant/20 flex items-center justify-between text-xs text-on-surface-variant">
+                      <span className="text-[11px] font-semibold text-primary">
+                        {item.sessionBadge}
+                      </span>
+                      <span className="text-[11px] font-bold text-emerald-700">
+                        {item.availableSlotsCount} {translations.slotsOpenBadge}
+                      </span>
+                    </div>
+                  </motion.div>
                 );
               })}
             </div>
           </div>
 
-          {/* Time Slot Picker by Period */}
+          {/* Time Slot Picker by Clinical Period */}
           <div className="space-y-4 pt-2">
-            {/* Morning */}
+            {/* Morning Sessions */}
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-primary" />
-                <span>{translations.morningSlots}</span>
+                <span>{translations.morningSlots} (09:00 AM – 11:30 AM)</span>
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                {TIME_SLOTS.morning.map((slot) => {
+                {CLINIC_TIME_SLOTS.morning.map((slot) => {
                   const isSelected = selectedSlot === slot;
                   return (
                     <motion.button
@@ -377,27 +529,28 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
                       type="button"
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setSelectedSlot(slot)}
-                      className={`min-h-[44px] py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                      className={`min-h-[48px] py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                         isSelected
                           ? 'bg-primary text-on-primary border-primary shadow-sm'
                           : 'bg-surface border-outline-variant/30 text-on-surface hover:border-primary/50'
                       }`}
                     >
-                      {slot}
+                      {isSelected && <Check className="w-3.5 h-3.5 shrink-0" />}
+                      <span>{slot}</span>
                     </motion.button>
                   );
                 })}
               </div>
             </div>
 
-            {/* Afternoon */}
+            {/* Afternoon Sessions */}
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-secondary" />
-                <span>{translations.afternoonSlots}</span>
+                <span>{translations.afternoonSlots} (01:15 PM – 03:30 PM)</span>
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                {TIME_SLOTS.afternoon.map((slot) => {
+                {CLINIC_TIME_SLOTS.afternoon.map((slot) => {
                   const isSelected = selectedSlot === slot;
                   return (
                     <motion.button
@@ -405,27 +558,28 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
                       type="button"
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setSelectedSlot(slot)}
-                      className={`min-h-[44px] py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                      className={`min-h-[48px] py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                         isSelected
                           ? 'bg-primary text-on-primary border-primary shadow-sm'
                           : 'bg-surface border-outline-variant/30 text-on-surface hover:border-primary/50'
                       }`}
                     >
-                      {slot}
+                      {isSelected && <Check className="w-3.5 h-3.5 shrink-0" />}
+                      <span>{slot}</span>
                     </motion.button>
                   );
                 })}
               </div>
             </div>
 
-            {/* Evening */}
+            {/* Evening Sessions */}
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2 flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-teal-700" />
-                <span>{translations.eveningSlots}</span>
+                <span>{translations.eveningSlots} (04:15 PM – 05:00 PM)</span>
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                {TIME_SLOTS.evening.map((slot) => {
+                {CLINIC_TIME_SLOTS.evening.map((slot) => {
                   const isSelected = selectedSlot === slot;
                   return (
                     <motion.button
@@ -433,13 +587,14 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
                       type="button"
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setSelectedSlot(slot)}
-                      className={`min-h-[44px] py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                      className={`min-h-[48px] py-2.5 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                         isSelected
                           ? 'bg-primary text-on-primary border-primary shadow-sm'
                           : 'bg-surface border-outline-variant/30 text-on-surface hover:border-primary/50'
                       }`}
                     >
-                      {slot}
+                      {isSelected && <Check className="w-3.5 h-3.5 shrink-0" />}
+                      <span>{slot}</span>
                     </motion.button>
                   );
                 })}
@@ -607,7 +762,7 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
             <div>
               <p className="text-on-surface-variant font-medium">{translations.passClinician}</p>
               <p className="font-bold text-on-surface text-sm mt-0.5">Dr. Sarah Jenkins, DDS</p>
-              <p className="text-on-surface-variant">Operatory 1 (Panoramic)</p>
+              <p className="text-on-surface-variant">Operatory 1 (Panoramic Suite)</p>
             </div>
 
             <div>
@@ -653,4 +808,3 @@ export const UnifiedAppointmentBooking: React.FC<UnifiedAppointmentBookingProps>
 };
 
 export default UnifiedAppointmentBooking;
-
